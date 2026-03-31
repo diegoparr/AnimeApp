@@ -19,7 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.animeapp2.data.model.AnimeManga
 import androidx.compose.foundation.lazy.grid.items
+import com.example.animeapp2.R
 import com.example.animeapp2.ui.components.AnimeMangaCard
+import com.example.animeapp2.ui.components.CrimsonListTopBar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,19 +39,7 @@ fun HomeScreen(mangaList: List<AnimeManga>) {
         Scaffold(
             containerColor = Color.Transparent, // Dejamos que se vea el color del Surface
             topBar = {
-                // Tu barra superior con el título en Rojo Sangre
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            "ANIME MANGA LIST",
-                            color = MaterialTheme.colorScheme.primary, // El BloodRed
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
-                    )
-                )
+                CrimsonListTopBar()
             }
         ) { innerPadding ->
             // 3. EL CONTENIDO: Tu grilla de 3 columnas
@@ -66,7 +56,7 @@ fun HomeScreen(mangaList: List<AnimeManga>) {
                         title = manga.title,
                         genres = manga.genres,
                         coverImage = manga.coverImage,
-                        modifier = Modifier.padding(1.dp)
+                        modifier = Modifier.padding(1 .dp)
                     )
                 }
             }
