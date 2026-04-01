@@ -35,7 +35,7 @@ fun AnimeMangaCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            // Imagen de fondo con recorte suave (Relación 2:3 estilo poster)
+            // Imagen de fondo traida de API, con recorte suave (Relación 2:3 estilo poster)
             AsyncImage(
                 model = coverImage.large,
                 contentDescription = null,
@@ -81,7 +81,8 @@ fun AnimeMangaCard(
                     .padding(start = 8.dp, end = 8.dp, bottom = 8.dp, top = 24.dp)
             ) {
                 Text(
-                    text = title.english ?: title.romaji ?: title.native,
+                    text = title.english ?: title.romaji ?: title.native, // Si no hay titulo en ingles, usar romaji o native
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color.White,
                     fontSize = 14.sp,
                     lineHeight = 18.sp,

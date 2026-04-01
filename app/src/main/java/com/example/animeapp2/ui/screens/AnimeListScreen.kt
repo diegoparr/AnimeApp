@@ -41,7 +41,7 @@ fun HomeScreen(mangaList: List<AnimeManga>) {
                 CrimsonListTopBar()
             }
         ) { innerPadding ->
-            // 3. EL CONTENIDO: Tu grilla de 3 columnas
+            // 3. EL CONTENIDO: Grilla de 3 columnas
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier

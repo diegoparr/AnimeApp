@@ -3,8 +3,6 @@ package com.example.animeapp2.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -28,14 +26,13 @@ fun CrimsonListTopBar(){
     CenterAlignedTopAppBar(
         title = {
             Row(
-                // 1. Quitamos fillMaxHeight() para que la Row se ajuste al contenido
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_app_icon),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(40.dp) // Un tamaño de 32dp suele equilibrarse mejor con el texto
+                        .size(40.dp)
                         .align(Alignment.CenterVertically) // Asegura centrado vertical
                 )
 
@@ -43,8 +40,6 @@ fun CrimsonListTopBar(){
 
                 Text(
                     text = "Crimson List",
-                    // 2. Recomendación: Usa titleLarge o headlineSmall
-                    // displayLarge es muy grande para un TopBar y suele desalinear
                     style = MaterialTheme.typography.displayLarge.copy(),
                     letterSpacing = 1.5.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -53,7 +48,6 @@ fun CrimsonListTopBar(){
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
-            // 3. Cambia esto a primary si quieres que el texto sea ROJO (BloodRed)
             titleContentColor = MaterialTheme.colorScheme.onBackground
         )
     )
