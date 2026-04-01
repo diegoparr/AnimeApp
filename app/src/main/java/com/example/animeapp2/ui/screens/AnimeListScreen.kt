@@ -30,14 +30,13 @@ fun HomeScreen(mangaList: List<AnimeManga>) {
     // 1. EL ANCLA DEL THEME: El Surface principal
     Surface(
         modifier = Modifier.fillMaxSize(),
-        // Aquí es donde ocurre la magia: toma el color que definiste en Theme.kt
+        // Se toma el color definido en Theme.kt
         color = MaterialTheme.colorScheme.background,
-        // Tip de pro: la elevación tonal le da un brillo sutil muy elegante
         tonalElevation = 1.dp
     ) {
         // 2. LA ESTRUCTURA: El Scaffold organiza el contenido
         Scaffold(
-            containerColor = Color.Transparent, // Dejamos que se vea el color del Surface
+            containerColor = Color.Transparent,
             topBar = {
                 CrimsonListTopBar()
             }
