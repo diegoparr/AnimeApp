@@ -71,14 +71,14 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            // 2. EL ENVOLTORIO: Tu tema personalizado
+            // 2. EL ENVOLTORIO: tema personalizado
             AnimeApp2Theme(darkTheme = true) {
                 // 3. EL LIENZO: Surface para el fondo
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // 4. LA PANTALLA: Llamamos a tu HomeScreen
+                    // 4. LA PANTALLA: Llamamos al HomeScreen
                     HomeScreen(mangaList = mockMangaList)
                 }
             }
