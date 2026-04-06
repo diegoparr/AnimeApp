@@ -1,0 +1,17 @@
+query GetAnimeMangas{
+    Page(page: 1, perPage: 30) {
+        media(sort: POPULARITY_DESC , isAdult: false) {
+            id
+            title {
+                romaji
+                english
+            }
+            coverImage {
+                large
+            }
+            type
+            genres
+            description
+        }
+    }
+}
