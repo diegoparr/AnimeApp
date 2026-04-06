@@ -55,6 +55,7 @@ fun CrimsonListTopBar(drawerState: DrawerState){
                     text = "Crimson List",
                     style = MaterialTheme.typography.displayLarge.copy(),
                     letterSpacing = 1.5.sp,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
