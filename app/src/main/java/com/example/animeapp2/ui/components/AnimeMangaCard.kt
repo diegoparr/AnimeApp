@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.animeapp2.data.model.CoverImage
 import com.example.animeapp2.data.model.Title
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun AnimeMangaCard(
@@ -27,12 +28,20 @@ fun AnimeMangaCard(
     coverImage: CoverImage,
     modifier: Modifier = Modifier
 ) {
+    // Intentamos parsear el color hexadecimal que viene de la API
+    val apiBackgroundColor = try {
+        coverImage.color?.let { Color(it.toColorInt()) } ?: Color(0xFF1A1A1A)
+    } catch (e: Exception) {
+        Color(0xFF1A1A1A) // Color oscuro por defecto si falla el parseo
+    }
+
     Card(
         modifier = modifier
             .padding(6.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = apiBackgroundColor)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             // Imagen de fondo traida de API, con recorte suave (Relación 2:3 estilo poster)
@@ -102,5 +111,5 @@ fun AnimeMangaCardPreview() {
         id = 20,
         title = Title("Naruto", "Naruto", "Naruto"),
         genres = listOf("Action","Adventure","Comedy","Drama","Fantasy","Supernatural"),
-        coverImage = CoverImage(large = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20-dE6UHbFFg1A5.jpg"))
+        coverImage = CoverImage(large = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20-dE6UHbFFg1A5.jpg", color = "e47850"))
 }
