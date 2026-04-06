@@ -19,44 +19,60 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.animeapp2.data.model.AnimeManga
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberDrawerState
 import com.example.animeapp2.R
 import com.example.animeapp2.ui.components.AnimeMangaCard
 import com.example.animeapp2.ui.components.CrimsonListTopBar
+import com.example.animeapp2.ui.components.DrawerMenu
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(mangaList: List<AnimeManga>) {
-    // 1. EL ANCLA DEL THEME: El Surface principal
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        // Se toma el color definido en Theme.kt
-        color = MaterialTheme.colorScheme.background,
-        tonalElevation = 1.dp
+
+    // Inicializa el estado del Drawer
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerMenu()
+        }
     ) {
-        // 2. LA ESTRUCTURA: El Scaffold organiza el contenido
-        Scaffold(
-            containerColor = Color.Transparent,
-            topBar = {
-                CrimsonListTopBar()
-            }
-        ) { innerPadding ->
-            // 3. EL CONTENIDO: Grilla de 3 columnas
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(8.dp)
-            ) {
-                items(mangaList) { manga ->
-                    AnimeMangaCard(
-                        id = manga.id,
-                        title = manga.title,
-                        genres = manga.genres,
-                        coverImage = manga.coverImage,
-                        modifier = Modifier.padding(1 .dp)
-                    )
+
+        // 1. EL ANCLA DEL THEME: El Surface principal
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            // Se toma el color definido en Theme.kt
+            color = MaterialTheme.colorScheme.background,
+            tonalElevation = 1.dp
+        ) {
+            // 2. LA ESTRUCTURA: El Scaffold organiza el contenido
+            Scaffold(
+                containerColor = Color.Transparent,
+                topBar = {
+                    CrimsonListTopBar(drawerState = drawerState)
+                }
+            ) { innerPadding ->
+                // 3. EL CONTENIDO: Grilla de 3 columnas
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(8.dp)
+                ) {
+                    items(mangaList) { manga ->
+                        AnimeMangaCard(
+                            id = manga.id,
+                            title = manga.title,
+                            genres = manga.genres,
+                            coverImage = manga.coverImage,
+                            modifier = Modifier.padding(1.dp)
+                        )
+                    }
                 }
             }
         }
