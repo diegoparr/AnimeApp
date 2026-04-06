@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
+    id("com.apollographql.apollo") version "4.4.2"
 }
 
 android {
@@ -53,6 +54,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.4.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
+    implementation("com.apollographql.apollo:apollo-runtime:4.4.2")
     implementation(libs.ml.kit.translate)
     implementation(libs.androidx.compose.ui.text)
     testImplementation(libs.junit)
@@ -62,4 +64,17 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+
+// Descarga del Schema de AniList
+apollo {
+    service("service"){
+        packageName.set("com.example.animeapp2")
+
+        introspection{
+            endpointUrl.set("https://graphql.anilist.co")
+            schemaFile.set(file("app/src/main/graphql/com/example/animeapp2/schema.graphqls"))
+        }
+    }
 }
