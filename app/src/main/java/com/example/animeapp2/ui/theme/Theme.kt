@@ -11,6 +11,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.example.animeappjetpackcomposee.ui.theme.Accent
 import com.example.animeappjetpackcomposee.ui.theme.BloodRed
 import com.example.animeappjetpackcomposee.ui.theme.DarkBackground
 import com.example.animeappjetpackcomposee.ui.theme.DarkSurface
@@ -20,7 +21,8 @@ import com.example.animeappjetpackcomposee.ui.theme.LightBackground
 import com.example.animeappjetpackcomposee.ui.theme.LightSurface
 
 private val DarkColorScheme = darkColorScheme(
-    primary = BloodRed,           // El color de acción (botones, selección)
+    primary = BloodRed, // El color de acción (botones, selección)
+    secondary = Accent,
     background = DarkBackground,  // El fondo de toda la pantalla
     surface = DarkSurface,        // El fondo de las tarjetas de manga
     onPrimary = Color.White,      // Color del texto cuando está sobre un botón rojo

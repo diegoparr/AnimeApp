@@ -26,9 +26,9 @@ val Typography = Typography(
         fontSize = 40.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = Montserrat,
+        fontFamily = BebasNeue,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontSize = 30.sp
     ),
     labelSmall = TextStyle(
         fontFamily = Montserrat,
