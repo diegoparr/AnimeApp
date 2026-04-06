@@ -19,15 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun DrawerMenu(){
-
-    val drawerGradient = Brush.linearGradient(
+fun DrawerMenu() {
+    // Definimos el degradado vertical "Vampírico" para un look Premium
+    val drawerGradient = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFF0A0A0A), // Negro profundo (Base)
-            Color(0xFF1A0505)  // Un rojo carmesí "sangre seca" casi negro (Acento)
-        ),
-        start = Offset(0f,0f),
-        end = Offset(0f, Float.POSITIVE_INFINITY)
+            Color(0xFF0D0D0D), // Negro puro arriba
+            Color(0xFF240202)  // Rojo carmesí muy profundo abajo
+        )
     )
 
     ModalDrawerSheet(
