@@ -5,34 +5,38 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.animeapp2.data.model.AnimeManga
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
-import com.example.animeapp2.R
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.animeapp2.ui.components.AnimeMangaCard
 import com.example.animeapp2.ui.components.CrimsonListTopBar
 import com.example.animeapp2.ui.components.DrawerMenu
+import com.example.animeapp2.viewmodel.AnimeMangaViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(mangaList: List<AnimeManga>) {
+fun HomeScreen(
+    viewModel : AnimeMangaViewModel = viewModel()
+) {
 
-    // Inicializa el estado del Drawer
+    LaunchedEffect(Unit) {
+        viewModel.fetchAnimes()
+    }
+
+
+    // Inicializa el estado de la barra lateral
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     ModalNavigationDrawer(
@@ -42,6 +46,7 @@ fun HomeScreen(mangaList: List<AnimeManga>) {
         }
     ) {
 
+        val animeMangaList = viewModel.animeMangaList
         // 1. EL ANCLA DEL THEME: El Surface principal
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -64,12 +69,18 @@ fun HomeScreen(mangaList: List<AnimeManga>) {
                         .fillMaxSize(),
                     contentPadding = PaddingValues(8.dp)
                 ) {
-                    items(mangaList) { manga ->
+                    itemsIndexed(animeMangaList) { index, animeManga ->
+
+                        if(index >= animeMangaList.size - 6 && !viewModel.isFetching){
+                            LaunchedEffect(animeMangaList.size) {
+                                viewModel.fetchAnimes()
+                            }
+                        }
                         AnimeMangaCard(
-                            id = manga.id,
-                            title = manga.title,
-                            genres = manga.genres,
-                            coverImage = manga.coverImage,
+                            id = animeManga.id,
+                            title = animeManga.title,
+                            genres = animeManga.genres,
+                            coverImage = animeManga.coverImage,
                             modifier = Modifier.padding(1.dp)
                         )
                     }
