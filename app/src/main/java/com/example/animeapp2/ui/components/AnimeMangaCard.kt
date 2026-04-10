@@ -54,7 +54,7 @@ fun AnimeMangaCard(
                 contentScale = ContentScale.Crop
             )
 
-            // Badge superior (Género/Tipo) - Estilo sutil "Pill"
+            // Badge superior (Género/Tipo) - Estilo sutil
             if (genres.isNotEmpty()) {
                 Surface(
                     color = Color(0xFFD50B48),
