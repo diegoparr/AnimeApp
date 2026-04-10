@@ -1,0 +1,29 @@
+package com.example.animeapp2.data.mapper
+
+import com.example.animeapp2.GetAnimeMangasListQuery
+import com.example.animeapp2.data.model.AnimeManga
+import com.example.animeapp2.data.model.Title
+import com.example.animeapp2.data.model.CoverImage
+import com.example.animeapp2.util.cleanHtml
+
+// Este mapper transforma objetos que vengan de la API en la seccion Medium a objetos Kotlin de la
+// clase AnimeManga.
+fun GetAnimeMangasListQuery.Medium.toDomain(): AnimeManga {
+    return AnimeManga(
+        id = this.id,
+        // 2. Mapeamos el titulo que trae la api a un objeto Title
+        title = Title(
+            romaji = this.title?.romaji ?: "",
+            english = this.title?.english ?: this.title?.romaji ?: "",
+            native = this.title?.native ?: ""
+        ),
+        type = this.type?.toString() ?: "UNKNOWN",
+        genres = this.genres?.filterNotNull() ?: emptyList(),
+        description = this.description?.cleanHtml() ?: "No description",
+        // 3. Mapeamos la imagen de portada que trae la api a un objeto CoverImage
+        coverImage = CoverImage(
+            large = this.coverImage?.large ?: "",
+            color = "#000000"
+        )
+    )
+}
