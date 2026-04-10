@@ -16,60 +16,6 @@ import com.example.animeapp2.ui.theme.AnimeApp2Theme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 1. DATOS DE PRUEBA (Mock Data)
-        // Usamos IDs de prueba y links de imágenes reales de AniList para testear
-        val mockMangaList = listOf(
-            AnimeManga(
-                id = 1,
-                title = Title("Naruto", "Naruto Shippuden", "ナルト- 疾風伝"),
-                type = "ANIME",
-                genres = listOf("Action", "Adventure"),
-                description = "Naruto Uzumaki wants to be the best ninja...",
-                coverImage = CoverImage("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20-dE6UHbFFg1A5.jpg", "e47850")
-            ),
-            AnimeManga(
-                id = 2,
-                title = Title("One Piece", "One Piece", "ONE PIECE"),
-                type = "ANIME",
-                genres = listOf("Action", "Adventure", "Comedy"),
-                description = "Gol D. Roger was known as the 'Pirate King'...",
-                coverImage = CoverImage("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21-ELSYx3yMPcKM.jpg","#e49335")
-            ),
-            AnimeManga(
-                id = 3,
-                title = Title("Bleach", "Bleach", "BLEACH"),
-                type = "ANIME",
-                genres = listOf("Action", "Adventure", "Supernatural"),
-                description = "Ichigo Kurosaki is a teenager gifted with the ability to see spirits...",
-                coverImage = CoverImage("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx269-d2GmRkJbMopq.png","#f1a150")
-            ),
-            AnimeManga(
-                id = 4,
-                title = Title("Attack on Titan", "Shingeki No Kyojin", "進撃の巨人"),
-                type = "ANIME",
-                genres = listOf("Action", "Drama", "Fantasy", "Mystery"),
-                description = "Centuries ago, mankind was slaughtered to near extinction by monstrous humanoid creatures called Titans...",
-                coverImage = CoverImage("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx16498-buvcRTBx4NSm.jpg","#f1a143")
-            ),
-            AnimeManga(
-                id = 5,
-                title = Title("Jujutsu Kaisen", "Jujutsu Kaisen", "呪術廻戦"),
-                type = "ANIME",
-                genres = listOf("Action", "Supernatural"),
-                description = "A boy fights... for the right death.",
-                coverImage = CoverImage("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx113415-LHBAeoZDIsnF.jpg","#e45d5d")
-            ),
-            AnimeManga(
-                id = 6,
-                title = Title("Demon Slayer: Kimetsu no Yaiba", "Kimetsu no Yaiba", "鬼滅の刃"),
-                type = "ANIME",
-                genres = listOf("Action", "Adventure", "Drama", "Supernatural"),
-                description = "It is the Taisho Period in Japan...",
-                coverImage = CoverImage("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx112151-1qlQwPB1RrJe.png","#f1c9ae")
-            )
-        )
-
         setContent {
             // 2. EL ENVOLTORIO: tema personalizado
             AnimeApp2Theme(darkTheme = true) {
@@ -79,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // 4. LA PANTALLA: Llamamos al HomeScreen
-                    HomeScreen(mangaList = mockMangaList)
+                    HomeScreen()
                 }
             }
         }
