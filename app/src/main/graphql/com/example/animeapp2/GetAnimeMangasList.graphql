@@ -1,5 +1,5 @@
-query GetAnimeMangasList{
-    Page(page: 1, perPage: 30) {
+query GetAnimeMangasList($page : Int){
+    Page(page: $page, perPage: 30) {
         media(sort: POPULARITY_DESC , isAdult: false) {
             id
             title {
