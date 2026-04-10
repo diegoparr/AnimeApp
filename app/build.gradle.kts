@@ -55,6 +55,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
     implementation("com.apollographql.apollo:apollo-runtime:4.4.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation(libs.ml.kit.translate)
     implementation(libs.androidx.compose.ui.text)
     testImplementation(libs.junit)
