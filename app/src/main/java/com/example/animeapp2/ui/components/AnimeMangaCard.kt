@@ -1,6 +1,7 @@
 package com.example.animeapp2.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -26,7 +27,8 @@ fun AnimeMangaCard(
     title: Title,
     genres: List<String>,
     coverImage: CoverImage,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick : () -> Unit = {},
 ) {
     // Intentamos parsear el color hexadecimal que viene de la API
     val apiBackgroundColor = try {
@@ -38,7 +40,8 @@ fun AnimeMangaCard(
     Card(
         modifier = modifier
             .padding(6.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable{ onClick() },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = apiBackgroundColor)
