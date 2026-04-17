@@ -28,7 +28,8 @@ import com.example.animeapp2.viewmodel.AnimeMangaViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel : AnimeMangaViewModel = viewModel()
+    viewModel : AnimeMangaViewModel = viewModel(),
+    onAnimeClick : (Int) -> Unit,
 ) {
 
     LaunchedEffect(Unit) {
@@ -81,7 +82,7 @@ fun HomeScreen(
                             title = animeManga.title,
                             genres = animeManga.genres,
                             coverImage = animeManga.coverImage,
-                            modifier = Modifier.padding(1.dp)
+                            onClick = {onAnimeClick(animeManga.id)}
                         )
                     }
                 }
