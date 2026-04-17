@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
     id("com.apollographql.apollo") version "4.4.2"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -56,7 +57,13 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
     implementation("com.apollographql.apollo:apollo-runtime:4.4.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation(libs.ml.kit.translate)
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+    implementation("androidx.compose.material:material-icons-extended:1.7.5")
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
+    implementation("com.google.firebase:firebase-ai")
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
     implementation(libs.androidx.compose.ui.text)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
