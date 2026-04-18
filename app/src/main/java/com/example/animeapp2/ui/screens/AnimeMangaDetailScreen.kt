@@ -34,6 +34,7 @@ import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -51,9 +52,15 @@ import com.example.animeapp2.viewmodel.AnimeMangaViewModel
 fun AnimeMangaDetailScreen(
     anime: AnimeManga,
     viewModel: AnimeMangaViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+
 ) {
     // Obtenemos la traducción específica para este anime desde el mapa del ViewModel
+    LaunchedEffect(anime.id) {
+        viewModel.loadTranslationFromDb(anime.id)
+
+    }
+
     val translation = viewModel.getTranslationFor(anime.id)
 
     Scaffold(
@@ -163,7 +170,7 @@ fun AnimeMangaDetailScreen(
                             TextButton(
                                 onClick = { 
                                     if (translation.isEmpty()) {
-                                        viewModel.translateDescription(anime.id, anime.description.cleanHtmlTags())
+                                        viewModel.translateDescription(anime)
                                     } else {
                                         viewModel.clearTranslation(anime.id)
                                     }
