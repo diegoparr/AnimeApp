@@ -16,7 +16,7 @@
 - **Comunicación con API (GraphQL):** Integración de **Apollo Kotlin 4** para el consumo de la API de *AniList*. Soporte para **Paginación Dinámica (Scroll Infinito)** optimizada.
 - **Navegación:** Uso de **Jetpack Navigation Compose** con rutas seguras basadas en *Sealed Classes* y paso de argumentos tipados.
 - **Inteligencia Artificial (IA Generativa):** 
-    - Integración de **Gemini 2.5 Flashh API** para la traducción contextual de sinopsis.
+    - Integración de **Gemini 2.5 Flash API** para la traducción contextual de sinopsis.
     - **Caché Persistente:** Las traducciones se almacenan en la base de datos local para minimizar el consumo de cuota de API y permitir el acceso offline.
 - **Diseño Visual "Premium":**
     - **Login Screen:** Fondo de mosaico inclinado (*Slanted Grid*) con posters de anime, capas de opacidad (*Scrim*) y animaciones de transición.
