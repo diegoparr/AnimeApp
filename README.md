@@ -44,4 +44,4 @@
     - Coil 3 (Imágenes)
 
 ---
-*Este proyecto se desarrolla como parte de un requerimiento académico para la materia Desarrollo Web y Movil*
+*Este proyecto se desarrolla como parte del proyecto final para la materia Desarrollo Web y Movil*
