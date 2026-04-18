@@ -1,7 +1,9 @@
 package com.example.animeapp2.ui.navigation
 
 sealed class Screen(val route : String){
-    
+
+    // Pantalla de Login
+    object Login : Screen("LoginScreen")
     // Pantalla Principal (Lista de Animes)
     object Home : Screen("AnimeMangaListHomeScreen")
     
