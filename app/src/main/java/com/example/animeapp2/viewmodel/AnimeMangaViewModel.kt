@@ -1,21 +1,27 @@
 package com.example.animeapp2.viewmodel
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.api.Optional
 import com.example.animeapp2.GetAnimeMangasListQuery
+import com.example.animeapp2.data.local.AppDatabase
+import com.example.animeapp2.data.local.entities.TranslationEntity
 import com.example.animeapp2.data.mapper.toDomain
 import com.example.animeapp2.data.model.AnimeManga
+import com.example.animeapp2.data.model.AnimeStatus
 import com.example.animeapp2.data.network.apolloClient
 import com.example.animeapp2.util.TranslatorManager
+import com.example.animeapp2.util.cleanHtml
 import kotlinx.coroutines.launch
 
-class AnimeMangaViewModel : ViewModel() {
+class AnimeMangaViewModel(application: Application) : AndroidViewModel(application) {
     private val translator = TranslatorManager()
+    private val animeDao = AppDatabase.getDatabase(application).animeMangaDao()
 
     var animeMangaList by mutableStateOf<List<AnimeManga>>(emptyList())
     private set
@@ -26,10 +32,20 @@ class AnimeMangaViewModel : ViewModel() {
     var isFetching by mutableStateOf(false)
         private set
 
-    // Mapa reactivo para guardar las traducciones por ID de anime
+    // Mapa para mantener la UI reactiva mientras cargamos
     private val _translations = mutableStateMapOf<Int, String>()
 
     fun getTranslationFor(id: Int): String = _translations[id] ?: ""
+
+    // Carga la traducción desde la DB al entrar a la pantalla de detalle
+    fun loadTranslationFromDb(animeId: Int) {
+        viewModelScope.launch {
+            val cached = animeDao.getTranslation(animeId)
+            if (cached != null) {
+                _translations[animeId] = cached
+            }
+        }
+    }
 
     fun fetchAnimes() {
         viewModelScope.launch {
@@ -48,18 +64,37 @@ class AnimeMangaViewModel : ViewModel() {
         }
     }
 
-    fun translateDescription(id: Int, text: String) {
-        // Si ya está traduciendo o ya existe, evitamos repetir
-        if (_translations[id] == "Traduciendo con IA...") return
-        
-        viewModelScope.launch {
-            _translations[id] = "Traduciendo con IA..."
-            val result = translator.translateText(text)
-            _translations[id] = result
+    fun translateDescription(anime : AnimeManga) {
+        if (_translations[anime.id] == "Traduciendo con IA...") return
+        viewModelScope.launch{
+            animeDao.insertAnimeManga(
+                com.example.animeapp2.data.local.entities.AnimeMangaEntity(
+                    id_animemanga = anime.id,
+                    titulo_romaji = anime.title.romaji,
+                    titulo_english = anime.title.english,
+                    titulo_native = anime.title.native,
+                    descripcion = anime.description,
+                    tipo = anime.type,
+                    portada_url = anime.coverImage.large
+                )
+            )
+            _translations[anime.id] = "Traduciendo con IA..."
+            val result = translator.translateText(anime.description.cleanHtml())
+
+            _translations[anime.id] = result
+
+            animeDao.insertTranslation(
+                TranslationEntity(
+                    id_animemanga = anime.id,
+                    lenguaje = "es",
+                    descripcion_traducida = result
+                )
+            )
         }
     }
 
     fun clearTranslation(id: Int) {
-        _translations.remove(id)
+        // En persistencia no solemos borrar el mapa, 
+        // pero podemos resetear el estado visual si es necesario.
     }
 }
