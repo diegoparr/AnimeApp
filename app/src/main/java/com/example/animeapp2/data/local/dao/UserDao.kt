@@ -1,0 +1,18 @@
+package com.example.animeapp2.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.example.animeapp2.data.local.entities.UserEntity
+
+
+@Dao
+interface UserDao {
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun registerUser(user: UserEntity) : Long
+
+    @Query("SELECT * FROM usuarios WHERE email_usuario = :email LIMIT 1")
+    suspend fun getUserByEmail(email : String) : UserEntity?
+
+}
