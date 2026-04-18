@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import com.example.animeapp2.ui.navigation.Screen
 import com.example.animeapp2.ui.screens.AnimeMangaDetailScreen
 import com.example.animeapp2.ui.screens.HomeScreen
+import com.example.animeapp2.ui.screens.LoginScreen
 import com.example.animeapp2.ui.theme.AnimeApp2Theme
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
 
@@ -39,7 +40,24 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Screen.Home.route
                     ) {
-                        // RUTA 1: Pantalla Principal (Lista)
+                        // Ruta 1 : Pantalla de Login
+                        composable(Screen.Login.route) {
+                            LoginScreen(
+                                onLoginSuccess = {
+                                    navController.navigate(Screen.Home.route)
+                                },
+                                onLoginError = {
+                                    // Manejar el error de inicio de sesión aquí
+                                }
+                            )
+
+                        }
+
+
+
+
+
+                        // RUTA 2: Pantalla Principal (Lista)
                         composable(Screen.Home.route) {
                             HomeScreen(
                                 viewModel = viewModel,
