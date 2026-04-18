@@ -47,7 +47,7 @@
     - Room Persistence 2.6.1
     - Apollo Kotlin 4.4.2 (GraphQL)
     - Navigation Compose 2.8.5
-    - Google AI SDK (Gemini)
+    - Google AI SDK (Gemini 2.5 Flash )
     - Coil 3 (Imágenes)
 
 ---
