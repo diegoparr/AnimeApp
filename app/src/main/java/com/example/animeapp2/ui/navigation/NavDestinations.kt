@@ -4,6 +4,10 @@ sealed class Screen(val route : String){
 
     // Pantalla de Login
     object Login : Screen("LoginScreen")
+    
+    // Pantalla de Registro
+    object Register : Screen("RegisterScreen")
+
     // Pantalla Principal (Lista de Animes)
     object Home : Screen("AnimeMangaListHomeScreen")
     
