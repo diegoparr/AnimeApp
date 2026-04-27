@@ -18,17 +18,21 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.animeapp2.ui.components.AnimeMangaCard
 import com.example.animeapp2.ui.components.CrimsonListTopBar
 import com.example.animeapp2.ui.components.DrawerMenu
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel : AnimeMangaViewModel = viewModel(),
+    navController : NavHostController,
     onAnimeClick : (Int) -> Unit,
 ) {
 
@@ -39,11 +43,17 @@ fun HomeScreen(
 
     // Inicializa el estado de la barra lateral
     val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerMenu()
+            DrawerMenu(
+                navController = navController,
+                onCloseDrawer = {
+                    scope.launch { drawerState.close() }
+                }
+            )
         }
     ) {
 
