@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "genero_animemanga",
+    tableName = "genre_animemanga",
 )
 
 data class GenreEntity(
