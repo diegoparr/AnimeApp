@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(
-    tableName = "anime_traducciones",
+    tableName = "anime_translations",
     primaryKeys = ["id_animemanga","lenguaje"],
     foreignKeys = [
         ForeignKey(
