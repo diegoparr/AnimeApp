@@ -13,7 +13,6 @@ import com.example.animeapp2.data.local.AppDatabase
 import com.example.animeapp2.data.local.entities.TranslationEntity
 import com.example.animeapp2.data.mapper.toDomain
 import com.example.animeapp2.data.model.AnimeManga
-import com.example.animeapp2.data.model.AnimeStatus
 import com.example.animeapp2.data.network.apolloClient
 import com.example.animeapp2.util.TranslatorManager
 import com.example.animeapp2.util.cleanHtml
