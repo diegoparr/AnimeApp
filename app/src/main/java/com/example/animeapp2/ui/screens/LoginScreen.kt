@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,12 +49,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import coil3.compose.AsyncImage
+import com.example.animeapp2.viewmodel.AuthUsersViewModel
 
 @Composable
 fun LoginScreen(
+    viewModel: AuthUsersViewModel,
     onLoginSuccess: () -> Unit,
-    onLoginError: () -> Unit
+    onLoginError: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
+
+    LaunchedEffect(viewModel.isAuthSuccess){
+        onLoginSuccess()
+    }
+
+
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
 
@@ -221,7 +231,9 @@ fun LoginScreen(
 
             // Botón de Registro
             TextButton(
-                onClick = { /*TODO*/ }
+                onClick = {
+                    onRegisterClick()
+                }
             ) {
                 Text(
                     text = "¿No tienes cuenta? Regístrate",
