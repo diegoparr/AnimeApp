@@ -16,7 +16,7 @@ import com.example.animeapp2.data.local.entities.*
         AnimeMangaUserCrossRef::class,
         GenreEntity::class
     ],
-    version = 1
+    version = 2
 
 
 
@@ -36,7 +36,9 @@ abstract class AppDatabase : RoomDatabase(){
                     context.applicationContext,
                     AppDatabase::class.java,
                     "crimson_list_db"
-                ).build()
+                )
+                .fallbackToDestructiveMigration(true)
+                .build()
                 INSTANCE = instance
                 instance
             }
