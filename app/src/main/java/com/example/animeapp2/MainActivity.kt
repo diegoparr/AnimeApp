@@ -17,8 +17,10 @@ import com.example.animeapp2.ui.navigation.Screen
 import com.example.animeapp2.ui.screens.AnimeMangaDetailScreen
 import com.example.animeapp2.ui.screens.HomeScreen
 import com.example.animeapp2.ui.screens.LoginScreen
+import com.example.animeapp2.ui.screens.RegisterScreen
 import com.example.animeapp2.ui.theme.AnimeApp2Theme
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
+import com.example.animeapp2.viewmodel.AuthUsersViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,40 +36,62 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     // Obtenemos el ViewModel aquí para compartir la lista entre pantallas si es necesario
-                    val viewModel: AnimeMangaViewModel = viewModel()
+                    val animeMangaViewModel: AnimeMangaViewModel = viewModel()
+                    val authUsersViewModel : AuthUsersViewModel = viewModel()
+
 
                     NavHost(
                         navController = navController,
                         startDestination = Screen.Home.route
                     ) {
-                        // Ruta 1 : Pantalla de Login
+                        // RUTA 1: Pantalla de Login
                         composable(Screen.Login.route) {
                             LoginScreen(
+                                viewModel = authUsersViewModel,
                                 onLoginSuccess = {
-                                    navController.navigate(Screen.Home.route)
+                                    navController.navigate(Screen.Home.route) {
+                                        popUpTo(Screen.Login.route) { inclusive = true }
+                                    }
                                 },
                                 onLoginError = {
                                     // Manejar el error de inicio de sesión aquí
+                                },
+                                onRegisterClick = {
+                                    navController.navigate(Screen.Register.route)
                                 }
                             )
-
                         }
 
+                        // RUTA 2: Pantalla de Registro
+                        composable(Screen.Register.route) {
+                            RegisterScreen(
+                                viewModel = authUsersViewModel,
+                                onRegisterSuccess = {
+                                    navController.navigate(Screen.Home.route) {
+                                        popUpTo(Screen.Login.route) { inclusive = true }
+                                    }
+                                },
+                                onRegisterError = {
+                                    // Manejar el error de registro aquí
+                                },
+                                onLoginClick = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
 
-
-
-
-                        // RUTA 2: Pantalla Principal (Lista)
+                        // RUTA 3: Pantalla Principal (Lista)
                         composable(Screen.Home.route) {
                             HomeScreen(
-                                viewModel = viewModel,
+                                viewModel = animeMangaViewModel,
+                                navController = navController,
                                 onAnimeClick = { id ->
                                     navController.navigate(Screen.Detail.createRoute(id))
                                 }
                             )
                         }
 
-                        // RUTA 2: Pantalla de Detalle (Recibe el ID)
+                        // RUTA 4: Pantalla de Detalle (Recibe el ID)
                         composable(
                             route = Screen.Detail.route,
                             arguments = listOf(navArgument("animeId") { type = NavType.IntType })
@@ -75,12 +99,12 @@ class MainActivity : ComponentActivity() {
                             val animeId = backStackEntry.arguments?.getInt("animeId") ?: 0
                             
                             // Buscamos el anime específico en la lista que el ViewModel ya tiene
-                            val selectedAnime = viewModel.animeMangaList.find { it.id == animeId }
+                            val selectedAnime = animeMangaViewModel.animeMangaList.find { it.id == animeId }
                             
                             if (selectedAnime != null) {
                                 AnimeMangaDetailScreen(
                                     anime = selectedAnime,
-                                    viewModel = viewModel, // Pasamos el viewModel para la traducción
+                                    viewModel = animeMangaViewModel, // Pasamos el viewModel para la traducción
                                     onBackClick = { navController.popBackStack() }
                                 )
                             }
