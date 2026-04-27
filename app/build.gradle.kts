@@ -61,6 +61,7 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-paging:${room_version}")
     implementation("androidx.room:room-ktx:${room_version}")
+    implementation(libs.jbcrypt)
     implementation("io.coil-kt.coil3:coil-compose:3.4.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
