@@ -155,30 +155,41 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
             }
 
             // Si no esta traducida, se traduce y se guarda en la db
-            _translations[id] = "Traduciendo con IA..."
-            val result = translator.translateText(anime.description.cleanHtml())
-            _translations[id] = result
+            
+            
+            try{
+                _translations[id] = "Traduciendo con IA..."
+                val result = translator.translateText(anime.description.cleanHtml())
 
-            // Tras traducir la sinopsis, se guarda en la db
-            // Primero debe existir el respectivo AnimeManga en la db para que la traduccion exista
-            animeDao.insertAnimeManga(
-                com.example.animeapp2.data.local.entities.AnimeMangaEntity(
-                    id_animemanga = anime.id,
-                    titulo_romaji = anime.title.romaji,
-                    titulo_english = anime.title.english,
-                    titulo_native = anime.title.native,
-                    descripcion = anime.description,
-                    tipo = anime.type.name,
-                    portada_url = anime.coverImage.large
-                )
-            )
-            animeDao.insertTranslation(
-                TranslationEntity(
-                    id_animemanga = anime.id,
-                    lenguaje = "es",
-                    descripcion_traducida = result
-                )
-            )
+                if (result.isNotBlank()) {
+                    _translations[id] = result
+                    
+                    // Tras traducir la sinopsis con éxito, se guarda en la db
+                    animeDao.insertAnimeManga(
+                        com.example.animeapp2.data.local.entities.AnimeMangaEntity(
+                            id_animemanga = anime.id,
+                            titulo_romaji = anime.title.romaji,
+                            titulo_english = anime.title.english,
+                            titulo_native = anime.title.native,
+                            descripcion = anime.description,
+                            tipo = anime.type.name,
+                            portada_url = anime.coverImage.large
+                        )
+                    )
+                    animeDao.insertTranslation(
+                        TranslationEntity(
+                            id_animemanga = anime.id,
+                            lenguaje = "es",
+                            descripcion_traducida = result
+                        )
+                    )
+                } else {
+                    _translations[id] = "Error: La IA devolvió un texto vacío"
+                }
+            } catch (e : Exception){
+                _translations[id] = "Error de conexión con la IA"
+                e.printStackTrace()
+            }
         }
     }
 
