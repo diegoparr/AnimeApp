@@ -1,5 +1,6 @@
 package com.example.animeapp2.ui.screens
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,20 +25,23 @@ import androidx.navigation.NavHostController
 import com.example.animeapp2.ui.components.AnimeMangaCard
 import com.example.animeapp2.ui.components.CrimsonListTopBar
 import com.example.animeapp2.ui.components.DrawerMenu
+import com.example.animeapp2.ui.components.SearchBar
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
+import com.example.animeapp2.viewmodel.AuthUsersViewModel
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel : AnimeMangaViewModel = viewModel(),
+    animeMangaviewModel : AnimeMangaViewModel = viewModel(),
+    authUsersViewModel : AuthUsersViewModel = viewModel(),
     navController : NavHostController,
     onAnimeClick : (Int) -> Unit,
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.fetchAnimes()
+        animeMangaviewModel.fetchAnimes()
     }
 
 
@@ -50,6 +54,7 @@ fun HomeScreen(
         drawerContent = {
             DrawerMenu(
                 navController = navController,
+                authviewModel = authUsersViewModel,
                 onCloseDrawer = {
                     scope.launch { drawerState.close() }
                 }
@@ -57,7 +62,7 @@ fun HomeScreen(
         }
     ) {
 
-        val animeMangaList = viewModel.animeMangaList
+        val animeMangaList = animeMangaviewModel.animeMangaList
         // 1. EL ANCLA DEL THEME: El Surface principal
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -72,30 +77,42 @@ fun HomeScreen(
                     CrimsonListTopBar(drawerState = drawerState)
                 }
             ) { innerPadding ->
-                // 3. EL CONTENIDO: Grilla de 3 columnas
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(8.dp)
-                ) {
-                    itemsIndexed(animeMangaList) { index, animeManga ->
 
-                        if(index >= animeMangaList.size - 6 && !viewModel.isFetching){
-                            LaunchedEffect(animeMangaList.size) {
-                                viewModel.fetchAnimes()
-                            }
+                Column(modifier = Modifier.padding(innerPadding)) {
+
+                    SearchBar(
+                        onSearch = { query ->
+                            animeMangaviewModel.fetchAnimesByUserQuery(query)
+                        },
+                        onClear = {
+                            animeMangaviewModel.fetchAnimes(isNewLoad = true)
                         }
-                        AnimeMangaCard(
-                            id = animeManga.id,
-                            title = animeManga.title,
-                            genres = animeManga.genres,
-                            coverImage = animeManga.coverImage,
-                            onClick = {onAnimeClick(animeManga.id)}
-                        )
+                    )
+
+                    // 3. EL CONTENIDO: Grilla de 3 columnas
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(8.dp)
+                    ) {
+                        itemsIndexed(animeMangaList) { index, animeManga ->
+
+                            if(index >= animeMangaList.size - 6 && !animeMangaviewModel.isFetching && animeMangaviewModel.hasNextPage){
+                                LaunchedEffect(animeMangaList.size) {
+                                    animeMangaviewModel.loadMore()
+                                }
+                            }
+                            AnimeMangaCard(
+                                id = animeManga.id,
+                                title = animeManga.title,
+                                genres = animeManga.genres,
+                                coverImage = animeManga.coverImage,
+                                onClick = {onAnimeClick(animeManga.id)}
+                            )
+                        }
                     }
                 }
+
             }
         }
     }
