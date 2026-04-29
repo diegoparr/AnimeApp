@@ -5,7 +5,7 @@ import com.example.animeapp2.data.model.Title
 
 data class AnimeManga(val id: Int,
                       val title: Title,
-                      val type: String,
+                      val type: MediaType,
                       val genres: List<String>,
                       val description: String,
                       val coverImage: CoverImage
