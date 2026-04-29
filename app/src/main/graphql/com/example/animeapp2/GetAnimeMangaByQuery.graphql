@@ -1,0 +1,19 @@
+query GetAnimeMangasListByQuery($page : Int, $search: String){
+    Page(page: $page, perPage: 30) {
+        media(search: $search, sort: POPULARITY_DESC , isAdult: false) {
+            id
+            title {
+                romaji
+                english
+                native
+
+            }
+            coverImage {
+                large
+            }
+            type
+            genres
+            description
+        }
+    }
+}
