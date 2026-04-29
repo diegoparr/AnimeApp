@@ -26,6 +26,113 @@
 
 ---
 
+## 🏗️ Estructura Completa del Proyecto
+
+A continuación se detalla la jerarquía de archivos y carpetas del repositorio:
+
+```text
+.
+├── app/
+│   ├── google-services.json    # Configuración de Firebase para Gemini
+│   ├── build.gradle.kts        # Dependencias y configuración del módulo app
+│   └── src/
+│       └── main/
+│           ├── AndroidManifest.xml
+│           ├── graphql/        # Schema y queries de AniList API
+│           ├── java/com/example/animeapp2/
+│           │   ├── data/
+│           │   │   ├── local/
+│           │   │   │   ├── dao/        # UserDao.kt, AnimeMangaDao.kt
+│           │   │   │   ├── entities/   # UserEntity, AnimeMangaEntity, etc.
+│           │   │   │   ├── AppDatabase.kt
+│           │   │   │   └── Converters.kt
+│           │   │   ├── mapper/         # AnimeMangaMapper.kt
+│           │   │   ├── model/          # AnimeManga, Title, CoverImage, AnimeStatus
+│           │   │   └── network/        # ApolloClient.kt
+│           │   ├── ui/
+│           │   │   ├── navigation/     # NavDestinations.kt
+│           │   │   ├── screens/        # LoginScreen, RegisterScreen, HomeScreen, DetailScreen
+│           │   │   └── theme/          # Color, Theme, Type
+│           │   ├── util/               # Extensions, SecurityHelper, TranslatorManager
+│           │   ├── viewmodel/          # AuthUsersViewModel, AnimeMangaViewModel
+│           │   └── MainActivity.kt     # Entry point & NavHost
+│           └── res/
+│               ├── drawable/           # Iconos y recursos gráficos
+│               ├── font/               # Tipografías personalizadas
+│               ├── values/             # strings.xml, colors.xml, themes.xml
+│               └── xml/                # Configuraciones de red y backup
+├── gradle/                     # Wrapper y catálogos de versiones (libs.versions.toml)
+├── build.gradle.kts            # Configuración de proyecto raíz
+├── settings.gradle.kts         # Definición de módulos
+└── README.md                   # Documentación principal
+```
+
+---
+
+## 🗄️ Modelo de Datos (Esquema de Base de Datos Room)
+
+La persistencia local se gestiona mediante un esquema relacional optimizado para rendimiento y seguridad:
+
+### 1. Tabla: `users`
+| Campo | Tipo | Restricción | Descripción |
+| :--- | :--- | :--- | :--- |
+| `id_usuario` | `Int` | PK (Auto) | Identificador único del usuario. |
+| `email_usuario` | `String` | Único | Correo electrónico para autenticación. |
+| `nombre_usuario` | `String` | - | Nombre público del perfil. |
+| `contraseña_hash` | `String` | - | Password cifrado con BCrypt. |
+
+### 2. Tabla: `anime_manga`
+| Campo | Tipo | Restricción | Descripción |
+| :--- | :--- | :--- | :--- |
+| `id_animemanga` | `Int` | PK | ID persistente desde la API AniList. |
+| `titulo_romaji` | `String` | - | Título principal (formato Romaji). |
+| `titulo_english` | `String?` | - | Título internacional (opcional). |
+| `titulo_native` | `String?` | - | Título original (Japonés). |
+| `descripcion` | `String` | - | Sinopsis (soporta HTML). |
+| `tipo` | `String` | - | Clasificación (ANIME / MANGA). |
+| `portada_url` | `String` | - | Enlace a la imagen principal. |
+
+### 3. Tabla: `anime_translations` (Caché IA)
+| Campo | Tipo | Restricción | Descripción |
+| :--- | :--- | :--- | :--- |
+| `id_animemanga` | `Int` | PK / FK | Referencia a la obra. |
+| `lenguaje` | `String` | PK | Código ISO de idioma (ej: "es"). |
+| `descripcion_traducida` | `String` | - | Texto generado por IA. |
+| `last_updated` | `Long` | - | Timestamp de sincronización. |
+
+### 4. Tabla: `genre_animemanga` (Maestra)
+| Campo | Tipo | Restricción | Descripción |
+| :--- | :--- | :--- | :--- |
+| `nombre_genero` | `String` | PK | Identificador único del género. |
+
+### 5. Tablas de Relación (Many-to-Many)
+
+**`anime_genre_cross_ref` (Relación Obra-Género)**
+
+| Campo | Tipo | Restricción | Descripción |
+| :--- | :--- | :--- | :--- |
+| `id_animemanga` | `Int` | PK / FK | Referencia al Anime/Manga. |
+| `nombre_genero` | `String` | PK / FK | Referencia al Género. |
+
+**`user_anime_library` (Biblioteca Personal)**
+
+| Campo  |  Tipo | Restricción | Descripción    |
+|---|---|-------------|----------------|
+|  `id_usuario` |  `Int` | PK / FK     | Usuario dueño de la colección. |
+| `id_animemanga`  |  `Int` | PK / FK     | Obra vinculada.|
+|  `estado`  |  `Enum` | -           | Estado (PENDIENTE, VIENDO, etc.). |
+|  `episodios_vistos` | `Int`  | -           | Progreso actual de lectura/visionado. |
+|  `nota_personal` |  `Int?` | -           |      Puntuación personal (1-10).          |
+| `es_favorito`  | `Boolean`  | -           |      Marcado como destacado.          |
+|  `fecha_agregado` |  `Long` | -           |         Timestamp de creación del registro.        |
+
+
+
+
+
+
+---
+
 ## 🛠️ Roadmap y Desarrollo Planificado
 
 ### 📱 Funcionalidades de Usuario
