@@ -39,10 +39,15 @@ class MainActivity : ComponentActivity() {
                     val animeMangaViewModel: AnimeMangaViewModel = viewModel()
                     val authUsersViewModel : AuthUsersViewModel = viewModel()
 
+                    val startRoute = if (authUsersViewModel.currentUser != null) {
+                        Screen.Home.route
+                    } else {
+                        Screen.Login.route
+                    }
 
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Home.route
+                        startDestination = startRoute
                     ) {
                         // RUTA 1: Pantalla de Login
                         composable(Screen.Login.route) {
@@ -71,9 +76,6 @@ class MainActivity : ComponentActivity() {
                                         popUpTo(Screen.Login.route) { inclusive = true }
                                     }
                                 },
-                                onRegisterError = {
-                                    // Manejar el error de registro aquí
-                                },
                                 onLoginClick = {
                                     navController.popBackStack()
                                 }
@@ -83,7 +85,8 @@ class MainActivity : ComponentActivity() {
                         // RUTA 3: Pantalla Principal (Lista)
                         composable(Screen.Home.route) {
                             HomeScreen(
-                                viewModel = animeMangaViewModel,
+                                animeMangaviewModel = animeMangaViewModel,
+                                authUsersViewModel = authUsersViewModel,
                                 navController = navController,
                                 onAnimeClick = { id ->
                                     navController.navigate(Screen.Detail.createRoute(id))
