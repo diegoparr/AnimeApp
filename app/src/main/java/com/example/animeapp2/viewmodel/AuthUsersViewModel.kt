@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.example.animeapp2.data.local.entities.UserEntity
 import com.example.animeapp2.util.SecurityHelper
+import com.example.animeapp2.util.isValidEmail
 import kotlinx.coroutines.launch
 class AuthUsersViewModel (application : Application) : AndroidViewModel(application){
 
@@ -39,22 +40,44 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
             isLoading = true
             resetStatus()
             try {
-                val existingUser = userDao.getUserByEmail(email)
-                if(existingUser != null){
-                    errorMessage = "El correo ya está en uso"
+                if(nombre.isEmpty() || email.isEmpty() || password.isEmpty()){
+                    errorMessage = "Todos los campos son obligatorios"
+                    return@launch
                 }
-                else if (userDao.getUserByName(nombre) != null){
+
+                if(!email.isValidEmail()){
+                    errorMessage = "El email no es válido"
+                    return@launch
+                }
+
+                if (userDao.getUserByName(nombre) != null){
                     errorMessage = "El nombre de usuario ya está en uso"
+                    return@launch
                 }
-                else if (password.length < 6 ){
+
+                if (userDao.getUserByEmail(email) != null) {
+                    errorMessage = "El correo ya está en uso"
+                    return@launch
+                }
+
+                if (password.length < 6){
                     errorMessage = "La contraseña debe tener al menos 6 caracteres"
+                    return@launch
                 }
-                else {
-                    val newUser = UserEntity(nombre_usuario = nombre, email_usuario = email, contraseña_hash = SecurityHelper.hashPassword(password))
-                    userDao.registerUser(newUser)
-                    currentUser = newUser
-                    isAuthSuccess = true
+
+                if (password.contains(" ")){
+                    errorMessage = "La contraseña no puede contener espacios"
+                    return@launch
                 }
+
+                val newUser = UserEntity(nombre_usuario = nombre,
+                    email_usuario = email,
+                    contraseña_hash = SecurityHelper.hashPassword(password))
+
+                userDao.registerUser(newUser)
+                currentUser = newUser
+                isAuthSuccess = true
+
             }
             catch (e : Exception){
                 errorMessage = "Error de registro : ${e.message} "
@@ -94,6 +117,11 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
         }
     }
 
+    fun logout() {
+        currentUser = null    // Ya no hay usuario
+        errorMessage = null   // Limpiamos errores
+        isAuthSuccess = false // Apagamos el interruptor de éxito
+    }
     fun resetStatus() {
         errorMessage = null
         isAuthSuccess = false
