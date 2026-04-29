@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,8 +25,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CheckboxDefaults.colors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -55,7 +61,6 @@ import com.example.animeapp2.viewmodel.AuthUsersViewModel
 fun RegisterScreen(
     viewModel : AuthUsersViewModel,
     onRegisterSuccess: () -> Unit,
-    onRegisterError: () -> Unit,
     onLoginClick: () -> Unit
 ) {
     var userName by remember { mutableStateOf("") }
@@ -176,7 +181,8 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = userName,
-                onValueChange = { userName = it },
+                onValueChange = { userName = it
+                                viewModel.resetStatus()},
                 label = { Text("Nombre de Usuario") },
                 modifier = Modifier.fillMaxWidth(0.8f), // Alineado con el botón
                 leadingIcon = {
@@ -196,7 +202,8 @@ fun RegisterScreen(
             // Campo de Correo
             OutlinedTextField(
                 value = userEmail,
-                onValueChange = { userEmail = it },
+                onValueChange = { userEmail = it
+                                viewModel.resetStatus()},
                 label = { Text("Correo electrónico") },
                 modifier = Modifier.fillMaxWidth(0.8f), // Alineado con el botón
                 leadingIcon = {
@@ -215,7 +222,8 @@ fun RegisterScreen(
             // Campo de Contraseña
             OutlinedTextField(
                 value = userPassword,
-                onValueChange = { userPassword = it },
+                onValueChange = { userPassword = it
+                                viewModel.resetStatus()},
                 label = { Text("Contraseña") },
                 modifier = Modifier.fillMaxWidth(0.8f), // Alineado con el botón
                 leadingIcon = {
@@ -236,7 +244,8 @@ fun RegisterScreen(
             // Campo de confirmar Contraseña
             OutlinedTextField(
                 value = userConfirmPassword,
-                onValueChange = { userConfirmPassword = it },
+                onValueChange = { userConfirmPassword = it
+                                viewModel.resetStatus()},
                 label = { Text("Confirmar Contraseña") },
                 modifier = Modifier.fillMaxWidth(0.8f), // Alineado con el botón
                 leadingIcon = {
@@ -257,7 +266,13 @@ fun RegisterScreen(
 
             // Botón Principal
             Button(
-                onClick = { onRegisterSuccess() },
+                onClick = {
+                    viewModel.register(userName, userEmail, userPassword)
+                    if(viewModel.isAuthSuccess){
+                        onRegisterSuccess()
+                        viewModel.resetStatus()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp),
@@ -265,7 +280,17 @@ fun RegisterScreen(
                 // OPCIONAL: Desactivar si están vacíos
                 enabled = userEmail.isNotEmpty() && userPassword.isNotEmpty()
             ) {
-                Text("LOGEARSE", style = MaterialTheme.typography.labelLarge)
+                if(viewModel.isLoading){
+                    // Circulo de carga pequeño dentro del botón
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                }
+                else{
+                    Text("LOGEARSE", style = MaterialTheme.typography.labelLarge)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -280,6 +305,40 @@ fun RegisterScreen(
                     text = "¿Ya tienes cuenta? Inicia sesión",
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
+            }
+
+            androidx.compose.animation.AnimatedVisibility(
+                visible = viewModel.errorMessage != null,
+                enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically(),
+                exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.shrinkVertically()
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(top = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.9f)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = viewModel.errorMessage ?: "",
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
         }
     }
