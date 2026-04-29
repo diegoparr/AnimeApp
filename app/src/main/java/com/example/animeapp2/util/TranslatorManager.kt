@@ -13,7 +13,7 @@ import com.google.firebase.ai.type.GenerativeBackend
                 Traduce el siguiente texto de sinopsis de anime del inglés al español.
                 Asegúrate de que la traducción sea fluida, profesional y respete 
                 los términos técnicos del mundo del anime.
-                No añadas comentarios tuyos, solo devuelve el texto traducido.
+                No añadas comentarios tuyos, solo devuelve el texto traducido y estructura tu respuesta de forma que sea comodo de leer para el lector.
                 
                 Texto: $text
             """.trimIndent()
