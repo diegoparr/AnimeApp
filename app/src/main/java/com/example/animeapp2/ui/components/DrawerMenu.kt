@@ -3,6 +3,7 @@ package com.example.animeapp2.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -25,16 +26,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.animeapp2.R
 import com.example.animeapp2.ui.navigation.Screen
+import com.example.animeapp2.viewmodel.AuthUsersViewModel
 
 @Composable
 fun DrawerMenu(
     navController: NavController,
+    authviewModel: AuthUsersViewModel,
     onCloseDrawer: () -> Unit // Función para cerrar el drawer tras hacer clic
 ) {
     // Observamos la ruta actual para saber qué ítem resaltar
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
+    val currentUser = authviewModel.currentUser
     val drawerGradient = Brush.verticalGradient(
         colors = listOf(
             Color(0xFF0D0D0D), 
@@ -51,26 +54,76 @@ fun DrawerMenu(
             .width(310.dp)
             .background(drawerGradient)
     ) {
-        // --- HEADER ---
+        // --- HEADER PREMIUM ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 48.dp, bottom = 32.dp, start = 24.dp),
+                .padding(top = 56.dp, bottom = 32.dp, start = 24.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(R.drawable.ic_app_icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(42.dp)
-                )
-                Spacer(Modifier.width(14.dp))
-                Text(
-                    text = "CRIMSON LIST",
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 2.sp
-                )
+            Column {
+                // Branding
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_app_icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = "CRIMSON LIST",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 3.sp
+                        ),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // Sección de Usuario
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Avatar Circular con "Glow"
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .background(
+                                brush = Brush.linearGradient(
+                                    colors = listOf(MaterialTheme.colorScheme.primary, Color(0xFF8B0000))
+                                ),
+                                shape = CircleShape
+                            )
+                            .padding(2.dp)
+                            .background(Color(0xFF1A1A1A), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = currentUser?.nombre_usuario?.firstOrNull()?.uppercase() ?: "U",
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Black),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column {
+                        Text(
+                            text = "BIENVENIDO DE NUEVO",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.4f),
+                            letterSpacing = 0.5.sp
+                        )
+                        Text(
+                            text = currentUser?.nombre_usuario ?: "Explorador",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp
+                            ),
+                            color = Color.White
+                        )
+                    }
+                }
             }
         }
 
@@ -98,24 +151,23 @@ fun DrawerMenu(
                     label = { Text(text = item.label, fontSize = 16.sp) },
                     selected = isSelected,
                     onClick = {
-                        // Navegación inteligente
                         if (currentRoute != item.route) {
                             if (item.route == Screen.Login.route) {
-                                // Al cerrar sesión, limpiamos todo el stack para evitar volver atrás
+                                authviewModel.logout()
                                 navController.navigate(item.route) {
                                     popUpTo(0) { inclusive = true }
                                     launchSingleTop = true
                                 }
-                            } else {
+                            }
+                            else {
                                 navController.navigate(item.route) {
-                                    // Evita acumular pantallas iguales en el historial
                                     popUpTo(Screen.Home.route) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
                             }
                         }
-                        onCloseDrawer() // Cerramos el menú lateral
+                        onCloseDrawer()
                     },
                     icon = {
                         Icon(
@@ -125,21 +177,32 @@ fun DrawerMenu(
                         )
                     },
                     colors = NavigationDrawerItemDefaults.colors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedContainerColor = Color.Transparent, // Hacemos transparente para que mande nuestro gradient
                         unselectedContainerColor = Color.Transparent,
                         selectedTextColor = Color.White,
                         unselectedTextColor = Color.White.copy(alpha = 0.7f)
                     ),
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .then(
+                            if (isSelected) {
+                                Modifier.background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.01f)
+                                        )
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                            } else Modifier
+                        )
                 )
             }
-
             Spacer(modifier = Modifier.weight(1f))
-
         }
     }
 }
 
-// Clase de ayuda para los datos del menú
 data class MenuData(val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val route: String)
