@@ -41,11 +41,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.animeapp2.data.model.AnimeManga
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
+import java.util.Locale
+import java.util.Locale.getDefault
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -127,7 +130,8 @@ fun AnimeMangaDetailScreen(
                         ) {
                             SuggestionChip(
                                 onClick = { },
-                                label = { Text(anime.type) },
+                                label = { Text(anime.type.name.lowercase(getDefault()).capitalize(
+                                    Locale.ROOT)) },
                                 shape = RoundedCornerShape(8.dp),
                                 colors = SuggestionChipDefaults.suggestionChipColors(
                                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
@@ -168,12 +172,8 @@ fun AnimeMangaDetailScreen(
                             
                             // BOTÓN DE TRADUCCIÓN: Habla con el Mapa del ViewModel usando el ID
                             TextButton(
-                                onClick = { 
-                                    if (translation.isEmpty()) {
-                                        viewModel.translateDescription(anime)
-                                    } else {
-                                        viewModel.clearTranslation(anime.id)
-                                    }
+                                onClick = {
+                                    viewModel.translateDescription(anime)
                                 }
                             ) {
                                 Icon(
