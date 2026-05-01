@@ -37,6 +37,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -67,6 +68,13 @@ fun RegisterScreen(
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
     var userConfirmPassword by remember { mutableStateOf("") }
+
+    LaunchedEffect(viewModel.isAuthSuccess) {
+        if (viewModel.isAuthSuccess) {
+            onRegisterSuccess()
+            viewModel.resetStatus()
+        }
+    }
 
 
     val posters = remember{
@@ -268,10 +276,6 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     viewModel.register(userName, userEmail, userPassword)
-                    if(viewModel.isAuthSuccess){
-                        onRegisterSuccess()
-                        viewModel.resetStatus()
-                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -289,7 +293,7 @@ fun RegisterScreen(
                     )
                 }
                 else{
-                    Text("LOGEARSE", style = MaterialTheme.typography.labelLarge)
+                    Text("REGISTRARSE", style = MaterialTheme.typography.labelLarge)
                 }
             }
 
