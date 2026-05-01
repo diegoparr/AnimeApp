@@ -8,5 +8,6 @@ data class UserEntity(
     @PrimaryKey(autoGenerate = true) val id_usuario: Int = 0,
     val email_usuario : String,
     val nombre_usuario: String,
-    val contraseña_hash : String
+    val contraseña_hash : String,
+    val cuenta_verificada: Boolean = false
 )
