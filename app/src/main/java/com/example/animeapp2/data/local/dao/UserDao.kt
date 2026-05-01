@@ -17,5 +17,8 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE nombre_usuario = :nombre LIMIT 1")
     suspend fun getUserByName(nombre : String) : UserEntity?
+
+    @Query("UPDATE users SET cuenta_verificada = :status WHERE id_usuario = :id")
+    suspend fun updateVerificationStatus(id: Int, status: Boolean)
 }
 
