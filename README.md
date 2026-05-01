@@ -8,8 +8,11 @@
 
 ### 🚀 Implementado (Fase de Desarrollo Activo)
 - **Arquitectura de Software:** Implementación sólida del patrón **MVVM (Model-View-ViewModel)** y **Clean Architecture** mediante el uso de Mappers para desacoplar modelos de API, dominio y persistencia.
-- **Seguridad de Datos:** Autenticación local robusta mediante el uso de **BCrypt** para el hasheo de contraseñas, garantizando que las credenciales nunca se almacenen en texto plano.
-- **Módulo de Autenticación:** Lógica completa de Registro y Login funcional, con validaciones de campos, manejo de errores en tiempo real y gestión de estados de carga.
+- **Seguridad de Datos & Autenticación (Híbrida):**
+    - **Firebase Authentication:** Integración para el manejo seguro de identidades en la nube.
+    - **Verificación de Email:** Flujo completo de validación de cuentas mediante el envío de correos electrónicos de confirmación antes de permitir el acceso a la plataforma.
+    - **Persistencia Local Segura:** Doble factor de seguridad mediante el uso de **BCrypt** para el hasheo de contraseñas en la base de datos local (Room).
+- **Módulo de Autenticación:** Lógica completa de Registro y Login funcional utilizando Corrutinas (`suspend functions` y `.await()`) para operaciones asíncronas no bloqueantes.
 - **Framework de UI:** Desarrollo íntegro con **Jetpack Compose** bajo una arquitectura declarativa y reactiva.
 - **Persistencia de Datos (Room):**
     - Sistema de base de datos local **SQLite** con **Room**.
@@ -51,7 +54,7 @@ A continuación se detalla la jerarquía de archivos y carpetas del repositorio:
 │           │   │   └── network/        # ApolloClient.kt
 │           │   ├── ui/
 │           │   │   ├── navigation/     # NavDestinations.kt
-│           │   │   ├── screens/        # LoginScreen, RegisterScreen, HomeScreen, DetailScreen
+│           │   │   ├── screens/        # LoginScreen, RegisterScreen, EmailAuthScreen, HomeScreen, DetailScreen
 │           │   │   └── theme/          # Color, Theme, Type
 │           │   ├── util/               # Extensions, SecurityHelper, TranslatorManager
 │           │   ├── viewmodel/          # AuthUsersViewModel, AnimeMangaViewModel
@@ -80,6 +83,7 @@ La persistencia local se gestiona mediante un esquema relacional optimizado para
 | `email_usuario` | `String` | Único | Correo electrónico para autenticación. |
 | `nombre_usuario` | `String` | - | Nombre público del perfil. |
 | `contraseña_hash` | `String` | - | Password cifrado con BCrypt. |
+| `cuenta_verificada` | `Boolean` | - | Estado de validación por email (Firebase Sync). |
 
 ### 2. Tabla: `anime_manga`
 | Campo | Tipo | Restricción | Descripción |
