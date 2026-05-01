@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.animeapp2.ui.navigation.Screen
 import com.example.animeapp2.ui.screens.AnimeMangaDetailScreen
+import com.example.animeapp2.ui.screens.EmailAuthScreen
 import com.example.animeapp2.ui.screens.HomeScreen
 import com.example.animeapp2.ui.screens.LoginScreen
 import com.example.animeapp2.ui.screens.RegisterScreen
@@ -38,6 +40,16 @@ class MainActivity : ComponentActivity() {
                     // Obtenemos el ViewModel aquí para compartir la lista entre pantallas si es necesario
                     val animeMangaViewModel: AnimeMangaViewModel = viewModel()
                     val authUsersViewModel : AuthUsersViewModel = viewModel()
+                    val currentUser = authUsersViewModel.currentUser
+
+                    LaunchedEffect(currentUser) {
+                        if (currentUser == null){
+                            navController.navigate(Screen.Login.route){
+                                popUpTo(Screen.Home.route){inclusive = true}
+                            }
+                        }
+                    }
+
 
                     val startRoute = if (authUsersViewModel.currentUser != null) {
                         Screen.Home.route
@@ -72,12 +84,23 @@ class MainActivity : ComponentActivity() {
                             RegisterScreen(
                                 viewModel = authUsersViewModel,
                                 onRegisterSuccess = {
-                                    navController.navigate(Screen.Home.route) {
+                                    navController.navigate(Screen.EmailAuth.route) {
                                         popUpTo(Screen.Login.route) { inclusive = true }
                                     }
                                 },
                                 onLoginClick = {
                                     navController.popBackStack()
+                                }
+                            )
+                        }
+
+                        // RUTA 3: Pantalla de Autenticacion con Firebase
+                        composable(Screen.EmailAuth.route){
+                            EmailAuthScreen(
+                                onContinueClick = {
+                                    navController.navigate(Screen.Login.route){
+                                        popUpTo(Screen.Register.route){inclusive = true}
+                                    }
                                 }
                             )
                         }
