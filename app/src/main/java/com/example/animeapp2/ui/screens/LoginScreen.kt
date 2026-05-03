@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
@@ -168,14 +169,12 @@ fun LoginScreen(
         ) {
             // Logo
             Image(
-                painter = painterResource(R.drawable.ic_app_icon),
+                painter = painterResource(R.drawable.ic_app_2),
                 contentDescription = null,
-                modifier = Modifier.size(80.dp) // Un poco más grande para que destaque
+                modifier = Modifier.size(180.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Título
+            // Título (Eliminamos el Spacer para que se peguen)
             Text(
                 text = "Crimson List",
                 style = MaterialTheme.typography.displayLarge,
