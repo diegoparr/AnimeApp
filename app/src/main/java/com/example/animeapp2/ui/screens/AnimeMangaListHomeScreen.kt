@@ -62,7 +62,7 @@ fun HomeScreen(
         }
     ) {
 
-        val animeMangaList = animeMangaviewModel.animeMangaList
+        val animeMangaList = animeMangaviewModel.animeMangaDefaultList
         // 1. EL ANCLA DEL THEME: El Surface principal
         Surface(
             modifier = Modifier.fillMaxSize(),
