@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.animeapp2.ui.navigation.Screen
 import com.example.animeapp2.ui.screens.AnimeMangaDetailScreen
+import com.example.animeapp2.ui.screens.DiscoverScreen
 import com.example.animeapp2.ui.screens.EmailAuthScreen
 import com.example.animeapp2.ui.screens.HomeScreen
 import com.example.animeapp2.ui.screens.LoginScreen
@@ -117,6 +118,15 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        // RUTA DE DESCUBRIR
+                        composable(Screen.Search.route) {
+                            DiscoverScreen(
+                                animeMangaViewModel = animeMangaViewModel,
+                                authUsersViewModel = authUsersViewModel,
+                                navController = navController
+                            )
+                        }
+
                         // RUTA 4: Pantalla de Detalle (Recibe el ID)
                         composable(
                             route = Screen.Detail.route,
@@ -124,13 +134,14 @@ class MainActivity : ComponentActivity() {
                         ) { backStackEntry ->
                             val animeId = backStackEntry.arguments?.getInt("animeId") ?: 0
                             
-                            // Buscamos el anime específico en la lista que el ViewModel ya tiene
-                            val selectedAnime = animeMangaViewModel.animeMangaList.find { it.id == animeId }
+                            // Buscamos el anime específico en cualquiera de las listas del ViewModel
+                            val selectedAnime = animeMangaViewModel.findAnimeById(animeId)
                             
                             if (selectedAnime != null) {
                                 AnimeMangaDetailScreen(
                                     anime = selectedAnime,
                                     viewModel = animeMangaViewModel, // Pasamos el viewModel para la traducción
+                                    authViewModel = authUsersViewModel,
                                     onBackClick = { navController.popBackStack() }
                                 )
                             }
