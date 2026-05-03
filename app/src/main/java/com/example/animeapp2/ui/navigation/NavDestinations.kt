@@ -20,7 +20,7 @@ sealed class Screen(val route : String){
     }
     
     // Tu biblioteca personal (Favoritos)
-    object MyList : Screen("MyListScreen")
+    object MyList : Screen("MyLibraryScreen")
     
     // La pantalla de Descubrir / Búsqueda
     object Search : Screen("DiscoverScreen")
