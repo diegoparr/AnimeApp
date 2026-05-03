@@ -32,10 +32,13 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
     var currentUser by mutableStateOf<UserEntity?>(null)
         private set
 
+    var currentUserId by mutableStateOf<Int?>(null)
+        private set
+
     // 4. Check de navegacion
     var isAuthSuccess by mutableStateOf(false)
         private set
-    
+
     var isVerificationEmailSent by mutableStateOf(false)
         private set
 
@@ -147,6 +150,15 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
                 errorMessage = "Error de autenticación: ${e.localizedMessage ?: e.message}"
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    fun loadCurrentUserId(){
+        viewModelScope.launch {
+            val email = auth.currentUser?.email
+            if (email != null) {
+                currentUserId = userDao.getUserIdByEmail(email)
             }
         }
     }
