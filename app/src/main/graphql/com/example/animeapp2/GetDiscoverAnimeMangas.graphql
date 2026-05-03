@@ -1,0 +1,41 @@
+query GetDiscoverAnimeMangasQuery(
+    $page: Int,
+    $genre: String,
+    $sort: [MediaSort],
+    $season: MediaSeason,
+    $seasonYear: Int,
+    $format: MediaFormat,
+    $status : MediaStatus,
+    $popularityLesser : Int
+    $averageScoreGreater : Int
+) {
+    Page(page: $page, perPage: 50) {
+        media(
+            sort: $sort,
+            isAdult: false,
+            genre: $genre,
+            season: $season,
+            seasonYear: $seasonYear,
+            format: $format,
+            status : $status,
+            averageScore_greater: $averageScoreGreater,
+            popularity_lesser: $popularityLesser
+        ) {
+            id
+            title {
+                romaji
+                english
+                native
+            }
+            coverImage {
+                large
+                color
+            }
+            type
+            genres
+            description
+            seasonYear
+            averageScore
+        }
+    }
+}
