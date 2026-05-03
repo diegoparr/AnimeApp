@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -65,18 +66,20 @@ fun DrawerMenu(
                 // Branding
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
-                        painter = painterResource(R.drawable.ic_app_icon),
+                        painter = painterResource(R.drawable.ic_app_2),
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(80.dp)
                     )
-                    Spacer(Modifier.width(10.dp))
+                    Spacer(Modifier.width(4.dp))
                     Text(
                         text = "CRIMSON LIST",
-                        style = MaterialTheme.typography.labelLarge.copy(
+                        style = MaterialTheme.typography.displayMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 3.sp
+                            letterSpacing = 2.sp,
+                            fontSize = 32.sp,
+                            lineHeight = 32.sp
                         ),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
