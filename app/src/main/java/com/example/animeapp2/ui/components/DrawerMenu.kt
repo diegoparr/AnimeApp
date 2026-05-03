@@ -154,20 +154,22 @@ fun DrawerMenu(
                     label = { Text(text = item.label, fontSize = 16.sp) },
                     selected = isSelected,
                     onClick = {
-                        if (currentRoute != item.route) {
-                            if (item.route == Screen.Login.route) {
-                                authviewModel.logout()
-                                navController.navigate(item.route) {
-                                    popUpTo(0) { inclusive = true }
-                                    launchSingleTop = true
-                                }
+                        if (item.route == Screen.Login.route) {
+                            authviewModel.logout()
+                            navController.navigate(item.route) {
+                                popUpTo(0) { inclusive = true }
                             }
-                            else {
-                                navController.navigate(item.route) {
-                                    popUpTo(Screen.Home.route) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
+                        }
+                        else {
+                            // NAVEGACIÓN ESTABLE Y SIN ERRORES DE ESTADO
+                            navController.navigate(item.route) {
+                                // 1. Volvemos siempre a la Home borrando lo que haya en medio
+                                // Pero SIN guardar estados problemáticos
+                                popUpTo(Screen.Home.route) {
+                                    inclusive = (item.route == Screen.Home.route)
                                 }
+                                // 2. Si ya estamos en la pantalla, no creamos otra
+                                launchSingleTop = true
                             }
                         }
                         onCloseDrawer()
