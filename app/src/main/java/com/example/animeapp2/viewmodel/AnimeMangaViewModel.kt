@@ -1,10 +1,12 @@
 package com.example.animeapp2.viewmodel
 
 import android.app.Application
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.input.key.type
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,6 +26,13 @@ import com.example.animeapp2.type.MediaSort
 import com.example.animeapp2.type.MediaStatus
 import com.example.animeapp2.util.TranslatorManager
 import com.example.animeapp2.util.cleanHtml
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AnimeMangaViewModel(application: Application) : AndroidViewModel(application) {
@@ -31,7 +40,7 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
     private val animeDao = AppDatabase.getDatabase(application).animeMangaDao()
 
     var animeMangaDefaultList by mutableStateOf<List<AnimeManga>>(emptyList())
-    private set
+        private set
 
     // Listas separadas para cada fila de la pantalla Discover
     var trendingList by mutableStateOf<List<AnimeManga>>(emptyList())
@@ -47,7 +56,7 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
     var moviesList by mutableStateOf<List<AnimeManga>>(emptyList())
 
     var currentPage = 1
-    private set
+        private set
 
     var isFetching by mutableStateOf(false)
         private set
@@ -59,8 +68,52 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
         private set
 
     // Estado para la entrada actual en la biblioteca del usuario
-    var currentLibraryEntry by mutableStateOf<com.example.animeapp2.data.local.entities.AnimeMangaUserCrossRef?>(null)
+    var currentLibraryEntry by mutableStateOf<com.example.animeapp2.data.local.entities.AnimeMangaUserCrossRef?>(
+        null
+    )
         private set
+
+    private val _sectionsState = mutableStateMapOf<String, SectionState>()
+
+    fun getListForSection(section: String) = _sectionsState[section]?.list ?: emptyList()
+    fun isSectionFetching(section: String) = _sectionsState[section]?.isFetching ?: false
+
+
+    // Estado sincronizado con la DB para identificar id de usuario
+    private val _currentUserId = MutableStateFlow<Int?>(null)
+
+    fun setUserId(userId: Int?) {
+        // Esta funcion se llamara desde la UI al abrir la biblioteca
+        _currentUserId.value = userId
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _dbLibraryFlow = _currentUserId.flatMapLatest { userId ->
+        if (userId == null) flowOf(emptyList()) // Si no hay usuario, lista vacía
+        else animeDao.getUserLibrary(userId)   // Si hay, se abre el grifo de Room
+    }
+
+    // Variable de estado para identificar como quiso filtrar su libreria el usuario
+    var selectedLibraryFilter by mutableStateOf<AnimeStatus?>(null)
+
+    /**
+     * filteredLibrary es la lista reactiva que vera el usuario en la pantalla de su biblioteca
+     * combine observa varios flows a la vez, en este caso observa el flow que consulta la libreria del
+     * usuario constantemente, y el estado del filtro que selecciono el usuario para filtrar
+     * su biblioteca
+      */
+
+    val filteredLibrary = combine(
+        _dbLibraryFlow,
+        snapshotFlow { selectedLibraryFilter } // Convertimos el filtro en flujo de datos
+    ) { list, filter ->       // Asignamos el flow a las dos variables temporales respectivamente
+        if (filter == null) list
+        else list.filter { it.libraryEntry.estado == filter }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000), // Optimización de batería
+        initialValue = emptyList()
+    )
 
     // Gestión de paginación para secciones de Discover
     data class SectionState(
@@ -70,13 +123,11 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
         val isFetching: Boolean = false
     )
 
-    private val _sectionsState = mutableStateMapOf<String, SectionState>()
-
-    fun getListForSection(section: String) = _sectionsState[section]?.list ?: emptyList()
-    fun isSectionFetching(section: String) = _sectionsState[section]?.isFetching ?: false
 
     // Mapa para mantener la UI reactiva mientras cargamos
     private val _translations = mutableStateMapOf<Int, String>()
+
+
 
     fun getTranslationFor(id: Int): String = _translations[id] ?: ""
 
@@ -329,8 +380,7 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
             }
 
             // Si no esta traducida, se traduce y se guarda en la db
-            
-            
+
             try{
                 _translations[id] = "Traduciendo con IA..."
                 val result = translator.translateText(anime.description.cleanHtml())
@@ -413,5 +463,8 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
+
+
+
 
 }
