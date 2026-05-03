@@ -24,7 +24,15 @@ fun SearchBar(
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var isOnSearchQueryList by remember {mutableStateOf(false)}
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(searchQuery) {
+        if(searchQuery.isEmpty() && isOnSearchQueryList){
+            onClear()
+            isOnSearchQueryList = false
+        }
+    }
 
     OutlinedTextField(
         value = searchQuery,
@@ -51,6 +59,7 @@ fun SearchBar(
                 IconButton(onClick = {
                     searchQuery = ""
                     onClear()
+                    isOnSearchQueryList = false
                     focusManager.clearFocus()
                 }) {
                     Icon(
@@ -76,6 +85,7 @@ fun SearchBar(
             onSearch = {
                 if (searchQuery.isNotBlank()) {
                     onSearch(searchQuery)
+                    isOnSearchQueryList = true
                     focusManager.clearFocus()
                 }
             }
