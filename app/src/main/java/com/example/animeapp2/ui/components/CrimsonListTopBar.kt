@@ -20,6 +20,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,21 +43,21 @@ fun CrimsonListTopBar(drawerState: DrawerState){
             ) {
 
                 Image(
-                    painter = painterResource(R.drawable.ic_app_icon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .align(Alignment.CenterVertically) // Asegura centrado vertical
+                    painter = painterResource(R.drawable.ic_app_2),
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(64.dp)
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
                     text = "Crimson List",
-                    style = MaterialTheme.typography.displayLarge.copy(),
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = 36.sp,
+                        lineHeight = 36.sp
+                    ),
                     letterSpacing = 1.5.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         },
