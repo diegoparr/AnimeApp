@@ -1,162 +1,76 @@
 # 🩸 Crimson List - Gestión de Biblioteca de Anime & Manga
 
-**Crimson List** es una solución móvil de nivel premium para la gestión y organización de catálogos personales de anime y manga. Desarrollada de forma nativa para Android, la aplicación combina una estética visual inmersiva ("Eclipse Theme") con una arquitectura moderna, escalable y el uso de Inteligencia Artificial Generativa.
+**Crimson List** es una solución móvil de nivel premium para la gestión y organización de catálogos personales de anime y manga. Desarrollada de forma nativa para Android, la aplicación combina una estética visual inmersiva con una arquitectura moderna, escalable y el uso de Inteligencia Artificial Generativa.
 
 ---
 
 ## 🛠️ Estado Técnico del Proyecto
 
-### 🚀 Implementado (Fase de Desarrollo Activo)
+### 🚀 Implementado (Fase de Desarrollo Final)
 - **Arquitectura de Software:** Implementación sólida del patrón **MVVM (Model-View-ViewModel)** y **Clean Architecture** mediante el uso de Mappers para desacoplar modelos de API, dominio y persistencia.
-- **Seguridad de Datos & Autenticación (Híbrida):**
-    - **Firebase Authentication:** Integración para el manejo seguro de identidades en la nube.
-    - **Verificación de Email:** Flujo completo de validación de cuentas mediante el envío de correos electrónicos de confirmación antes de permitir el acceso a la plataforma.
-    - **Persistencia Local Segura:** Doble factor de seguridad mediante el uso de **BCrypt** para el hasheo de contraseñas en la base de datos local (Room).
-- **Módulo de Autenticación:** Lógica completa de Registro y Login funcional utilizando Corrutinas (`suspend functions` y `.await()`) para operaciones asíncronas no bloqueantes.
-- **Framework de UI:** Desarrollo íntegro con **Jetpack Compose** bajo una arquitectura declarativa y reactiva.
-- **Persistencia de Datos (Room):**
-    - Sistema de base de datos local **SQLite** con **Room**.
-    - Modelado relacional avanzado que incluye tablas maestras (`Usuarios`, `AnimeManga`, `Generos`) y tablas de relación Muchos a Muchos (`CrossRefs`).
-    - Uso de **TypeConverters** para el manejo de tipos complejos.
-- **Comunicación con API (GraphQL):** Integración de **Apollo Kotlin 4** para el consumo de la API de *AniList*. Soporte para **Paginación Dinámica (Scroll Infinito)** optimizada.
-- **Navegación:** Uso de **Jetpack Navigation Compose** con rutas seguras basadas en *Sealed Classes* y paso de argumentos tipados.
+- **Diseño Inmersivo & Reactivo:**
+    - **Dynamic Color Extraction:** La interfaz adapta sus colores (botones, sombras, acentos) automáticamente basándose en la paleta predominante de la portada de cada anime.
+    - **Estética Cinematic:** Uso de degradados profundos, tipografía de alto impacto (*Bebas Neue* & *Montserrat*) y efectos de iluminación neón en botones de acción.
+- **Comunicación con API (GraphQL):** Integración de **Apollo Kotlin 4** para el consumo de la API de *AniList*. 
+    - **Paginación Lateral Infinita:** Sistema de carga dinámica en filas horizontales (Discover) que detecta la proximidad del final del scroll para cargar contenido nuevo sin interrupciones.
 - **Inteligencia Artificial (IA Generativa):** 
-    - Integración de **Gemini API** para la traducción contextual de sinopsis.
-    - **Caché Persistente:** Almacenamiento local de traducciones para optimizar el consumo de cuota de API y permitir acceso offline.
-- **Diseño Visual "Premium":**
-    - **Login & Register Screens:** Fondo de mosaico inclinado (*Slanted Grid*) con posters, capas de opacidad (*Scrim*) y animaciones de transición.
-    - **Detail Screen:** Vista inmersiva con gradientes y controles de traducción.
+    - Integración de **Gemini AI** para la traducción contextual de sinopsis del inglés al español.
+    - **Caché Inteligente:** Las traducciones se persisten en Room para evitar llamadas innecesarias a la API y permitir lectura offline.
+- **Gestión de Biblioteca (Persistence):**
+    - Sistema de **Upsert** (Update/Insert) para gestionar el progreso del usuario en tiempo real.
+    - Seguimiento detallado: Estado (Viendo, Completado, etc.), contador de episodios, nota personal (0-100) y favoritos.
+- **Seguridad & Autenticación:**
+    - **Firebase Authentication:** Manejo de identidades y verificación de email.
+    - **BCrypt:** Hasheo de contraseñas para la capa de seguridad local en Room.
+- **Navegación:** Uso de **Jetpack Navigation Compose** con rutas seguras y paso de argumentos para pantallas de detalle.
 
 ---
 
 ## 🏗️ Estructura Completa del Proyecto
 
-A continuación se detalla la jerarquía de archivos y carpetas del repositorio:
-
 ```text
 .
 ├── app/
-│   ├── google-services.json    # Configuración de Firebase para Gemini
-│   ├── build.gradle.kts        # Dependencias y configuración del módulo app
-│   └── src/
-│       └── main/
-│           ├── AndroidManifest.xml
-│           ├── graphql/        # Schema y queries de AniList API
-│           ├── java/com/example/animeapp2/
-│           │   ├── data/
-│           │   │   ├── local/
-│           │   │   │   ├── dao/        # UserDao.kt, AnimeMangaDao.kt
-│           │   │   │   ├── entities/   # UserEntity, AnimeMangaEntity, etc.
-│           │   │   │   ├── AppDatabase.kt
-│           │   │   │   └── Converters.kt
-│           │   │   ├── mapper/         # AnimeMangaMapper.kt
-│           │   │   ├── model/          # AnimeManga, Title, CoverImage, AnimeStatus
-│           │   │   └── network/        # ApolloClient.kt
-│           │   ├── ui/
-│           │   │   ├── navigation/     # NavDestinations.kt
-│           │   │   ├── screens/        # LoginScreen, RegisterScreen, EmailAuthScreen, HomeScreen, DetailScreen
-│           │   │   └── theme/          # Color, Theme, Type
-│           │   ├── util/               # Extensions, SecurityHelper, TranslatorManager
-│           │   ├── viewmodel/          # AuthUsersViewModel, AnimeMangaViewModel
-│           │   └── MainActivity.kt     # Entry point & NavHost
-│           └── res/
-│               ├── drawable/           # Iconos y recursos gráficos
-│               ├── font/               # Tipografías personalizadas
-│               ├── values/             # strings.xml, colors.xml, themes.xml
-│               └── xml/                # Configuraciones de red y backup
-├── gradle/                     # Wrapper y catálogos de versiones (libs.versions.toml)
-├── build.gradle.kts            # Configuración de proyecto raíz
-├── settings.gradle.kts         # Definición de módulos
-└── README.md                   # Documentación principal
+│   ├── graphql/        # Schema y queries (.graphql)
+│   ├── java/com/example/animeapp2/
+│   │   ├── data/
+│   │   │   ├── local/  # Room (DAO, Entities, DB)
+│   │   │   ├── mapper/ # Conversores API -> Domain
+│   │   │   └── model/  # Modelos de datos limpios
+│   │   ├── ui/
+│   │   │   ├── components/  # AddToLibrarySheet, DiscoverRow, SearchBar, etc.
+│   │   │   ├── screens/     # HomeScreen, DetailScreen, DiscoverScreen, Auth
+│   │   │   └── theme/       # Colores reactivos y tipografías
+│   │   └── viewmodel/       # Lógica de negocio y estados
+└── README.md
 ```
 
 ---
 
-## 🗄️ Modelo de Datos (Esquema de Base de Datos Room)
+## 🗄️ Modelo de Datos Destacado
 
-La persistencia local se gestiona mediante un esquema relacional optimizado para rendimiento y seguridad:
+### Tabla: `user_anime_library` (Relación Muchos a Muchos)
+La pieza central de la personalización, gestionada mediante la anotación `@Upsert` para una sincronización fluida:
 
-### 1. Tabla: `users`
-| Campo | Tipo | Restricción | Descripción |
-| :--- | :--- | :--- | :--- |
-| `id_usuario` | `Int` | PK (Auto) | Identificador único del usuario. |
-| `email_usuario` | `String` | Único | Correo electrónico para autenticación. |
-| `nombre_usuario` | `String` | - | Nombre público del perfil. |
-| `contraseña_hash` | `String` | - | Password cifrado con BCrypt. |
-| `cuenta_verificada` | `Boolean` | - | Estado de validación por email (Firebase Sync). |
-
-### 2. Tabla: `anime_manga`
-| Campo | Tipo | Restricción | Descripción |
-| :--- | :--- | :--- | :--- |
-| `id_animemanga` | `Int` | PK | ID persistente desde la API AniList. |
-| `titulo_romaji` | `String` | - | Título principal (formato Romaji). |
-| `titulo_english` | `String?` | - | Título internacional (opcional). |
-| `titulo_native` | `String?` | - | Título original (Japonés). |
-| `descripcion` | `String` | - | Sinopsis (soporta HTML). |
-| `tipo` | `String` | - | Clasificación (ANIME / MANGA). |
-| `portada_url` | `String` | - | Enlace a la imagen principal. |
-
-### 3. Tabla: `anime_translations` (Caché IA)
-| Campo | Tipo | Restricción | Descripción |
-| :--- | :--- | :--- | :--- |
-| `id_animemanga` | `Int` | PK / FK | Referencia a la obra. |
-| `lenguaje` | `String` | PK | Código ISO de idioma (ej: "es"). |
-| `descripcion_traducida` | `String` | - | Texto generado por IA. |
-| `last_updated` | `Long` | - | Timestamp de sincronización. |
-
-### 4. Tabla: `genre_animemanga` (Maestra)
-| Campo | Tipo | Restricción | Descripción |
-| :--- | :--- | :--- | :--- |
-| `nombre_genero` | `String` | PK | Identificador único del género. |
-
-### 5. Tablas de Relación (Many-to-Many)
-
-**`anime_genre_cross_ref` (Relación Obra-Género)**
-
-| Campo | Tipo | Restricción | Descripción |
-| :--- | :--- | :--- | :--- |
-| `id_animemanga` | `Int` | PK / FK | Referencia al Anime/Manga. |
-| `nombre_genero` | `String` | PK / FK | Referencia al Género. |
-
-**`user_anime_library` (Biblioteca Personal)**
-
-| Campo  |  Tipo | Restricción | Descripción    |
-|---|---|-------------|----------------|
-|  `id_usuario` |  `Int` | PK / FK     | Usuario dueño de la colección. |
-| `id_animemanga`  |  `Int` | PK / FK     | Obra vinculada.|
-|  `estado`  |  `Enum` | -           | Estado (PENDIENTE, VIENDO, etc.). |
-|  `episodios_vistos` | `Int`  | -           | Progreso actual de lectura/visionado. |
-|  `nota_personal` |  `Int?` | -           |      Puntuación personal (1-10).          |
-| `es_favorito`  | `Boolean`  | -           |      Marcado como destacado.          |
-|  `fecha_agregado` |  `Long` | -           |         Timestamp de creación del registro.        |
-
-
-
-
-
+| Campo  |  Tipo | Descripción    |
+|---|---|----------------|
+|  `id_usuario` |  `Int` | Usuario dueño de la colección (FK). |
+| `id_animemanga`  |  `Int` | Obra vinculada (FK).|
+|  `estado`  |  `Enum` | VIENDO, COMPLETADO, PAUSADO, etc. |
+|  `episodios_vistos` | `Int`  | Progreso actual. |
+|  `nota_personal` |  `Int?` | Puntuación personal (0-100). |
+| `es_favorito`  | `Boolean`  | Marcado como destacado. |
 
 ---
 
-## 🛠️ Roadmap y Desarrollo Planificado
-
-### 📱 Funcionalidades de Usuario
-- **Descubrir (Exploración):** Pantalla de búsqueda avanzada con filtros por géneros, temporada y año (Malla estilo Netflix/Crunchyroll).
-- **Gestión de Biblioteca:** Funcionalidad para que el usuario guarde y actualice su progreso (episodios vistos, nota personal, estado) en su biblioteca local vinculada a su cuenta.
-
----
-
-## 🏗️ Requisitos Técnicos
+## 🛠️ Requisitos Técnicos
 - **Android Studio:** Ladybug (2024.2.1) o superior.
-- **Min SDK:** API 24 (Android 7.0).
-- **Target SDK:** API 36.
-- **Kotlin:** 2.2.10+
 - **Bibliotecas Clave:** 
-    - Room Persistence 2.8.4
-    - Apollo Kotlin 4.4.2 (GraphQL)
-    - Navigation Compose 2.8.5
-    - JBcrypt 0.4 (Seguridad)
-    - Google AI SDK / Firebase AI
-    - Coil 3 (Imágenes)
+    - **Apollo Kotlin 4.4.2** (GraphQL)
+    - **Room Persistence 2.8.4**
+    - **Gemini AI SDK** (Traducción)
+    - **Jetpack Compose 1.7.x**
+    - **Coil 3** (Carga de imágenes asíncrona)
 
 ---
-*Este proyecto se desarrolla como proyecto final para la materia Desarrollo Web y Movil*
+*Este proyecto se desarrolla como proyecto final para la materia Desarrollo Web y Movil. La aplicación busca demostrar la capacidad de integrar servicios cloud (Firebase), APIs complejas (GraphQL) e IA Generativa en un entorno móvil profesional.*
