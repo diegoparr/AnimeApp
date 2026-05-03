@@ -10,10 +10,12 @@ query GetAnimeMangasList($page : Int){
             }
             coverImage {
                 large
+                color
             }
             type
             genres
             description
+            averageScore
         }
     }
 }
