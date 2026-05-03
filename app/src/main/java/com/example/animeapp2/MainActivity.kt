@@ -20,6 +20,7 @@ import com.example.animeapp2.ui.screens.DiscoverScreen
 import com.example.animeapp2.ui.screens.EmailAuthScreen
 import com.example.animeapp2.ui.screens.HomeScreen
 import com.example.animeapp2.ui.screens.LoginScreen
+import com.example.animeapp2.ui.screens.MyLibraryScreen
 import com.example.animeapp2.ui.screens.RegisterScreen
 import com.example.animeapp2.ui.theme.AnimeApp2Theme
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
@@ -106,7 +107,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        // RUTA 3: Pantalla Principal (Lista)
+                        // RUTA 4: Pantalla Principal (Lista)
                         composable(Screen.Home.route) {
                             HomeScreen(
                                 animeMangaviewModel = animeMangaViewModel,
@@ -118,7 +119,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        // RUTA DE DESCUBRIR
+                        // RUTA4: PANTALLA  DE DESCUBRIR
                         composable(Screen.Search.route) {
                             DiscoverScreen(
                                 animeMangaViewModel = animeMangaViewModel,
@@ -127,7 +128,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        // RUTA 4: Pantalla de Detalle (Recibe el ID)
+                        // RUTA 5: Pantalla de Detalle (Recibe el ID)
                         composable(
                             route = Screen.Detail.route,
                             arguments = listOf(navArgument("animeId") { type = NavType.IntType })
@@ -145,6 +146,13 @@ class MainActivity : ComponentActivity() {
                                     onBackClick = { navController.popBackStack() }
                                 )
                             }
+                        }
+
+                        // Ruta 6: Pantalla de Mi Lista
+                        composable(Screen.MyList.route){
+                            MyLibraryScreen(animeMangaViewModel,
+                                authUsersViewModel,
+                                navController)
                         }
                     }
                 }
