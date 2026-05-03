@@ -64,23 +64,44 @@ La aplicación sigue los principios de **Clean Architecture** y **MVVM**:
 
 ## 🗄️ Modelo de Datos (Esquema Room)
 
-### Tablas Principales
-| Tabla | Descripción |
-| :--- | :--- |
-| `users` | Credenciales y estado de verificación de usuarios. |
-| `anime_manga` | Información técnica de las obras (Títulos, portadas, sinopsis). |
-| `anime_translations` | Almacenamiento local de sinopsis procesadas por la IA. |
-| `user_anime_library` | **Tabla Intermedia (CrossRef):** Almacena el progreso del usuario (Estado, episodios, nota, favorito). |
+La persistencia local se gestiona mediante un esquema relacional optimizado, utilizando tablas maestras y tablas de relación (Muchos-a-Muchos) para una integridad total de los datos.
 
-### Detalle de `user_anime_library`
+### 1. Tablas Maestras
+| Tabla | Entidad | PK | Descripción |
+| :--- | :--- | :--- | :--- |
+| `users` | `UserEntity` | `id_usuario` | Credenciales, nombre de usuario y estado de verificación. |
+| `anime_manga` | `AnimeMangaEntity` | `id_animemanga` | Datos técnicos de las obras (Títulos, portadas, descripción). |
+| `genre_animemanga` | `GenreEntity` | `nombre_genero` | Catálogo maestro de géneros (Acción, Romance, etc.). |
+| `anime_translations` | `TranslationEntity` | `id_animemanga`, `lenguaje` | Almacenamiento local de sinopsis traducidas por IA. |
+
+### 2. Tablas de Relación (Muchos-a-Muchos)
+
+#### `user_anime_library` (Tu Biblioteca)
+Vincula a los **Usuarios** con los **Animes** que están siguiendo.
+
 | Campo | Tipo | Función |
 | :--- | :--- | :--- |
-| `id_usuario` | `Int` (FK) | Vinculación con el perfil del usuario. |
-| `id_animemanga` | `Int` (FK) | Vinculación con la obra maestra. |
-| `estado` | `Enum` | VIENDO, COMPLETADO, PAUSADO, ABANDONADO, PENDIENTE. |
-| `episodios_vistos` | `Int` | Contador de progreso. |
+| `id_usuario` | `Int` (FK) | Identificador del dueño de la entrada. |
+| `id_animemanga` | `Int` (FK) | Obra vinculada. |
+| `estado` | `Enum` | Progreso: VIENDO, COMPLETADO, PAUSADO, ABANDONADO, PENDIENTE. |
+| `episodios_vistos` | `Int` | Contador actual de capítulos visualizados. |
 | `nota_personal` | `Int?` | Valoración del usuario (0-100). |
-| `es_favorito` | `Boolean` | Flag de destaque personal. |
+| `es_favorito` | `Boolean` | Flag para destacar obras especiales (Icono ❤️). |
+| `fecha_agregado` | `Long` | Timestamp para ordenamiento cronológico. |
+
+#### `anime_genre_cross_ref`
+Vincula las **Obras** con sus respectivos **Géneros**.
+
+| Campo | Tipo | Función |
+| :--- | :--- | :--- |
+| `id_animemanga` | `Int` (FK) | Referencia a la obra. |
+| `nombre_genero` | `String` (FK) | Referencia al género maestro. |
+
+---
+
+### 🧩 Objetos de Relación (POJOs)
+Para facilitar el consumo de datos en la UI, se utilizan modelos de "ensamblaje" automático:
+- **`UserLibraryItem`**: Realiza un Join síncrono mediante `@Relation` para entregar en un solo objeto los datos del progreso del usuario junto con la información técnica del anime (Título y Portada). Es la fuente de datos principal de la pantalla **"Mi Lista"**.
 
 ---
 
@@ -94,4 +115,17 @@ La aplicación sigue los principios de **Clean Architecture** y **MVVM**:
 - **Seguridad:** Firebase Auth & JBcrypt
 
 ---
-*Desarrollado como Proyecto Final para la materia de Desarrollo Web y Móvil. 2025.*
+
+## 🛠️ Metodología de Desarrollo: Desarrollo Aumentado por IA
+
+Este proyecto ha sido desarrollado bajo un modelo de colaboración entre el desarrollador y herramientas de Inteligencia Artificial Generativa, permitiendo alcanzar un estándar de calidad industrial en un tiempo de ejecución optimizado.
+
+### División de Roles y Tareas
+
+| Actor | Rol | Responsabilidades Clave |
+| :--- | :--- | :--- |
+| **Desarrollador (Estudiante)** | **Arquitecto y Director Técnico** | Definición de la lógica de negocio, diseño de la base de datos relacional, dirección creativa de la UI/UX, integración de servicios (Firebase/Gemini), auditoría de seguridad y validación de la estabilidad del sistema. |
+| **Asistente (IA)** | **Copiloto Técnico** | Generación de estructuras de código (Boilerplate), resolución de errores sintácticos, optimización de queries GraphQL, implementación de patrones de diseño avanzados (MVVM) y soporte en documentación técnica. |
+
+---
+*Desarrollado como Proyecto Final para la materia de Desarrollo Web y Móvil. 2026.*
