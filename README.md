@@ -122,10 +122,10 @@ Este proyecto ha sido desarrollado bajo un modelo de colaboración entre el desa
 
 ### División de Roles y Tareas
 
-| Actor | Rol | Responsabilidades Clave |
-| :--- | :--- | :--- |
-| **Desarrollador (Estudiante)** | **Arquitecto y Director Técnico** | Definición de la lógica de negocio, diseño de la base de datos relacional, dirección creativa de la UI/UX, integración de servicios (Firebase/Gemini), auditoría de seguridad y validación de la estabilidad del sistema. |
-| **Asistente (IA)** | **Copiloto Técnico** | Generación de estructuras de código (Boilerplate), resolución de errores sintácticos, optimización de queries GraphQL, implementación de patrones de diseño avanzados (MVVM) y soporte en documentación técnica. |
+| Actor | Rol | Responsabilidades Clave                                                                                                                                                                                                                              |
+| :--- | :--- |:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Desarrollador (Estudiante)** | **Arquitecto y Director Técnico** | Definición de la lógica de negocio, diseño de la base de datos relacional, dirección creativa de la UI/UX, integración de servicios (Firebase/Gemini), diseño de queries GRAPHQL, auditoría de seguridad y validación de la estabilidad del sistema. |
+| **Asistente (IA)** | **Copiloto Técnico** | Generación de estructuras de código (Boilerplate), resolución de errores sintácticos, implementación de patrones de diseño avanzados (MVVM) y soporte en documentación técnica.                                                                      |
 
 ---
 *Desarrollado como Proyecto Final para la materia de Desarrollo Web y Móvil. 2026.*
