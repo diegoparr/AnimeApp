@@ -8,5 +8,6 @@ data class AnimeManga(val id: Int,
                       val type: MediaType,
                       val genres: List<String>,
                       val description: String,
-                      val coverImage: CoverImage
+                      val coverImage: CoverImage,
+                      val averageScore: Int?
 )
