@@ -50,6 +50,7 @@ import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.example.animeapp2.data.model.AnimeManga
 import com.example.animeapp2.ui.components.AddToLibrarySheet
+import com.example.animeapp2.util.cleanHtml
 import com.example.animeapp2.viewmodel.AnimeMangaViewModel
 import com.example.animeapp2.viewmodel.AuthUsersViewModel
 
@@ -241,7 +242,7 @@ fun AnimeMangaDetailScreen(
                         val descriptionToShow = when {
                             translation == "Traduciendo con IA..." -> "Procesando sinopsis con Gemini AI..."
                             translation.isNotEmpty() -> translation
-                            else -> anime.description.cleanHtmlTags()
+                            else -> anime.description.cleanHtml()
                         }
 
                         Surface(
@@ -338,6 +339,3 @@ fun AnimeMangaDetailScreen(
     }
 }
 
-fun String.cleanHtmlTags(): String {
-    return this.replace(Regex("<[^>]*>"), "")
-}
