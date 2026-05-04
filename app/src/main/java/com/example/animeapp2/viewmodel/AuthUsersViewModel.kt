@@ -168,6 +168,33 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
         errorMessage = null   // Limpiamos errores
         isAuthSuccess = false // Apagamos el interruptor de éxito
     }
+
+    fun updateUsername(nuevoNombre: String) {
+        val user = currentUser ?: return
+        if (nuevoNombre.isBlank()) {
+            errorMessage = "El nombre no puede estar vacío"
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                // Verificar si el nombre ya existe
+                val existingUser = userDao.getUserByName(nuevoNombre)
+                if (existingUser != null && existingUser.id_usuario != user.id_usuario) {
+                    errorMessage = "Este nombre de usuario ya está en uso"
+                    return@launch
+                }
+
+                userDao.updateUsername(user.id_usuario, nuevoNombre)
+                // Actualizar el estado local
+                currentUser = user.copy(nombre_usuario = nuevoNombre)
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Error al actualizar el nombre: ${e.message}"
+            }
+        }
+    }
+
     fun resetStatus() {
         errorMessage = null
         isAuthSuccess = false
