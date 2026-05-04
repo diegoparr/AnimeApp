@@ -9,7 +9,7 @@ import com.example.animeapp2.data.model.CoverImage
 import com.example.animeapp2.data.model.MediaType
 import com.example.animeapp2.util.cleanHtml
 
-// Este mapper transforma objetos que vengan de la API en la seccion Medium a objetos Kotlin de la
+// Este mapper transforma objetos que vengan de la API en la seccion Medium (media) a objetos Kotlin de la
 // clase AnimeManga.
 fun GetAnimeMangasListQuery.Medium.toDomain(): AnimeManga {
     return AnimeManga(
