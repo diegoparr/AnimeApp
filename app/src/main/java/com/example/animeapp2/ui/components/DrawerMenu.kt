@@ -115,7 +115,7 @@ fun DrawerMenu(
             .width(310.dp)
             .background(drawerGradient)
     ) {
-        // --- HEADER PREMIUM ---
+        // --- HEADER ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,7 +147,7 @@ fun DrawerMenu(
 
                 // Sección de Usuario
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Avatar Circular con "Glow"
+                    // Avatar Circular
                     Box(
                         modifier = Modifier
                             .size(56.dp)
