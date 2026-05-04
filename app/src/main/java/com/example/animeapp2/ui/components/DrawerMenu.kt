@@ -8,12 +8,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -39,12 +44,67 @@ fun DrawerMenu(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val currentUser = authviewModel.currentUser
+    
+    var showEditNameDialog by remember { mutableStateOf(false) }
+    var newName by remember { mutableStateOf("") }
+    var nameBeforeEdit by remember { mutableStateOf("") }
+
     val drawerGradient = Brush.verticalGradient(
         colors = listOf(
             Color(0xFF0D0D0D), 
             Color(0xFF240202)
         )
     )
+
+    if (showEditNameDialog) {
+        // Solo cerrar si el nombre en el ViewModel cambió respecto al que teníamos ANTES de editar
+        LaunchedEffect(currentUser?.nombre_usuario) {
+            if (currentUser?.nombre_usuario != nameBeforeEdit && authviewModel.errorMessage == null) {
+                showEditNameDialog = false
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = { showEditNameDialog = false },
+            title = { Text("Editar Nombre de Usuario") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = newName,
+                        onValueChange = { newName = it },
+                        label = { Text("Nuevo Nombre") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = authviewModel.errorMessage != null
+                    )
+                    authviewModel.errorMessage?.let {
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (newName == nameBeforeEdit) {
+                        showEditNameDialog = false
+                    } else {
+                        authviewModel.updateUsername(newName)
+                    }
+                }) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditNameDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 
     ModalDrawerSheet(
         drawerContainerColor = Color.Transparent,
@@ -117,14 +177,34 @@ fun DrawerMenu(
                             color = Color.White.copy(alpha = 0.4f),
                             letterSpacing = 0.5.sp
                         )
-                        Text(
-                            text = currentUser?.nombre_usuario ?: "Explorador",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 20.sp
-                            ),
-                            color = Color.White
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = currentUser?.nombre_usuario ?: "Explorador",
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 20.sp
+                                ),
+                                color = Color.White
+                            )
+                            if (currentUser != null) {
+                                IconButton(
+                                    onClick = { 
+                                        newName = currentUser.nombre_usuario
+                                        nameBeforeEdit = currentUser.nombre_usuario
+                                        authviewModel.resetStatus()
+                                        showEditNameDialog = true 
+                                    },
+                                    modifier = Modifier.size(24.dp).padding(start = 4.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "Editar nombre",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
