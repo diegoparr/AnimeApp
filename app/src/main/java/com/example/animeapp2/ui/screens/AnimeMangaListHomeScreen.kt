@@ -81,12 +81,16 @@ fun HomeScreen(
                 Column(modifier = Modifier.padding(innerPadding)) {
 
                     SearchBar(
+                        searchQuery = animeMangaviewModel.searchText,
+                        onSearchQueryChange = { animeMangaviewModel.searchText = it },
                         onSearch = { query ->
                             animeMangaviewModel.fetchAnimesByUserQuery(query)
                         },
                         onClear = {
                             animeMangaviewModel.fetchAnimes(isNewLoad = true)
-                        }
+                        },
+                        isSearchActive = animeMangaviewModel.isSearchActive,
+                        onIsSearchActiveChange = { animeMangaviewModel.isSearchActive = it }
                     )
 
                     // 3. EL CONTENIDO: Grilla de 3 columnas
