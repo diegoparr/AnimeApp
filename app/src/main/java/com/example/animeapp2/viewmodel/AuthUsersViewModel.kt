@@ -8,23 +8,28 @@ import com.example.animeapp2.data.local.AppDatabase
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.example.animeapp2.data.local.entities.UserEntity
+import com.example.animeapp2.data.repository.AuthRepository
 import com.example.animeapp2.util.SecurityHelper
 import com.example.animeapp2.util.isValidEmail
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+
 class AuthUsersViewModel (application : Application) : AndroidViewModel(application){
 
-    // Inicializar DAO
-    private val userDao = AppDatabase.getDatabase(application).userDao()
+    private val authRepository = AuthRepository(
+        FirebaseAuth.getInstance(),
+        AppDatabase.getDatabase(application).userDao()
+    )
 
-    // Inicializar autenticacion por email con Firebase
-    val auth = FirebaseAuth.getInstance()
+    // Para compatibilidad con la UI
+    val auth get() = FirebaseAuth.getInstance()
+
     // 1. Control de carga
     var isLoading by mutableStateOf(false)
         private set
 
-    // 2. Control de errores (se limpia al intentar de nuevo)
+    // 2. Control de errores
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
@@ -42,9 +47,6 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
     var isVerificationEmailSent by mutableStateOf(false)
         private set
 
-    /**
-     * REGISTRO CON HASH DE CONTRASEÑA
-     */
     fun register(nombre: String, email: String, password: String) {
         viewModelScope.launch {
             isLoading = true
@@ -60,12 +62,12 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
                     return@launch
                 }
 
-                if (userDao.getUserByName(nombre) != null) {
+                if (authRepository.getUserByName(nombre) != null) {
                     errorMessage = "El nombre de usuario ya está en uso"
                     return@launch
                 }
 
-                if (userDao.getUserByEmail(email) != null) {
+                if (authRepository.getUserByEmail(email) != null) {
                     errorMessage = "El correo ya está en uso"
                     return@launch
                 }
@@ -81,10 +83,10 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
                 }
 
                 // 1. Firebase Authentication
-                auth.createUserWithEmailAndPassword(email, password).await()
+                authRepository.register(email, password)
 
                 // 2. Email Verification
-                auth.currentUser?.sendEmailVerification()?.await()
+                authRepository.getCurrentFirebaseUser()?.sendEmailVerification()?.await()
                 isVerificationEmailSent = true
 
                 // 3. Local database registration
@@ -92,10 +94,10 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
                     nombre_usuario = nombre,
                     email_usuario = email,
                     contraseña_hash = SecurityHelper.hashPassword(password),
-                    cuenta_verificada = false // Por defecto es false
+                    cuenta_verificada = false
                 )
 
-                userDao.registerUser(newUser)
+                authRepository.registerUser(newUser)
                 currentUser = newUser
                 isAuthSuccess = true
 
@@ -107,31 +109,23 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
         }
     }
 
-    /**
-     * LOGIN CON COMPARACION DE HASH
-     */
     fun login(email : String, password : String) {
         viewModelScope.launch {
             isLoading = true
             resetStatus()
 
             try {
-                // 1. Intentar ingresar a Firebase (AHORA ESPERANDO RESPUESTA)
-                auth.signInWithEmailAndPassword(email, password).await()
+                authRepository.login(email, password)
+                val firebaseUser = authRepository.getCurrentFirebaseUser()
+                firebaseUser?.reload()?.await()
 
-                // 2. Forzar actualización para ver si ya se verificó el email
-                auth.currentUser?.reload()?.await()
-
-                // 3. Verificar si el email está verificado
-                if (auth.currentUser?.isEmailVerified == true) {
-                    val user = userDao.getUserByEmail(email)
+                if (firebaseUser?.isEmailVerified == true) {
+                    val user = authRepository.getUserByEmail(email)
                     if (user != null) {
-                        // Sincronizar estado de verificación con DB local si es necesario
                         if (!user.cuenta_verificada) {
-                            userDao.updateVerificationStatus(user.id_usuario, true)
+                            authRepository.updateVerificationStatus(user.id_usuario, true)
                         }
 
-                        // Comprobacion de contraseña ingresada con contraseña en db hasheada
                         if (SecurityHelper.checkPassword(password, user.contraseña_hash)) {
                             currentUser = user.copy(cuenta_verificada = true)
                             isAuthSuccess = true
@@ -143,10 +137,9 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
                     }
                 } else {
                     errorMessage = "Tu cuenta aún no ha sido verificada. Revisa tu correo."
-                    auth.signOut() // Importante cerrar sesión si no está verificado
+                    authRepository.signOut()
                 }
             } catch (e : Exception) {
-                // Este catch capturará errores de Firebase (como "Password incorrecto")
                 errorMessage = "Error de autenticación: ${e.localizedMessage ?: e.message}"
             } finally {
                 isLoading = false
@@ -156,17 +149,18 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
 
     fun loadCurrentUserId(){
         viewModelScope.launch {
-            val email = auth.currentUser?.email
+            val email = authRepository.getCurrentFirebaseUser()?.email
             if (email != null) {
-                currentUserId = userDao.getUserIdByEmail(email)
+                currentUserId = authRepository.getUserIdByEmail(email)
             }
         }
     }
 
     fun logout() {
-        currentUser = null    // Ya no hay usuario
-        errorMessage = null   // Limpiamos errores
-        isAuthSuccess = false // Apagamos el interruptor de éxito
+        authRepository.signOut()
+        currentUser = null
+        errorMessage = null
+        isAuthSuccess = false
     }
 
     fun updateUsername(nuevoNombre: String) {
@@ -178,15 +172,13 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
 
         viewModelScope.launch {
             try {
-                // Verificar si el nombre ya existe
-                val existingUser = userDao.getUserByName(nuevoNombre)
+                val existingUser = authRepository.getUserByName(nuevoNombre)
                 if (existingUser != null && existingUser.id_usuario != user.id_usuario) {
                     errorMessage = "Este nombre de usuario ya está en uso"
                     return@launch
                 }
 
-                userDao.updateUsername(user.id_usuario, nuevoNombre)
-                // Actualizar el estado local
+                authRepository.updateUsername(user.id_usuario, nuevoNombre)
                 currentUser = user.copy(nombre_usuario = nuevoNombre)
                 errorMessage = null
             } catch (e: Exception) {
@@ -199,5 +191,4 @@ class AuthUsersViewModel (application : Application) : AndroidViewModel(applicat
         errorMessage = null
         isAuthSuccess = false
     }
-
 }
