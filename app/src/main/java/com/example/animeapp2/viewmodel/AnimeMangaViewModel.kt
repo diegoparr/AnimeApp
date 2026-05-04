@@ -350,6 +350,7 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
             adventureList,
             horrorList,
             hypedUpcomingList,
+            thrillerList,
             hiddenGemsList,
             moviesList
         )
