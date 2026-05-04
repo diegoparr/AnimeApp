@@ -22,5 +22,8 @@ interface UserDao {
 
     @Query("UPDATE users SET cuenta_verificada = :status WHERE id_usuario = :id")
     suspend fun updateVerificationStatus(id: Int, status: Boolean)
+
+    @Query("UPDATE users SET nombre_usuario = :nuevoNombre WHERE id_usuario = :id")
+    suspend fun updateUsername(id: Int, nuevoNombre: String)
 }
 
