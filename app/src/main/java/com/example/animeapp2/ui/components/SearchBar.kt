@@ -19,24 +19,26 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onClear: () -> Unit,
+    isSearchActive: Boolean,
+    onIsSearchActiveChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    var isOnSearchQueryList by remember {mutableStateOf(false)}
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(searchQuery) {
-        if(searchQuery.isEmpty() && isOnSearchQueryList){
+        if(searchQuery.isEmpty() && isSearchActive){
             onClear()
-            isOnSearchQueryList = false
+            onIsSearchActiveChange(false)
         }
     }
 
     OutlinedTextField(
         value = searchQuery,
-        onValueChange = { searchQuery = it },
+        onValueChange = onSearchQueryChange,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -57,9 +59,9 @@ fun SearchBar(
         trailingIcon = {
             if (searchQuery.isNotEmpty()) {
                 IconButton(onClick = {
-                    searchQuery = ""
+                    onSearchQueryChange("")
                     onClear()
-                    isOnSearchQueryList = false
+                    onIsSearchActiveChange(false)
                     focusManager.clearFocus()
                 }) {
                     Icon(
@@ -85,7 +87,7 @@ fun SearchBar(
             onSearch = {
                 if (searchQuery.isNotBlank()) {
                     onSearch(searchQuery)
-                    isOnSearchQueryList = true
+                    onIsSearchActiveChange(true)
                     focusManager.clearFocus()
                 }
             }
