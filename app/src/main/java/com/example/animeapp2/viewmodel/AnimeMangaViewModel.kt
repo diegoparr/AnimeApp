@@ -64,6 +64,9 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
     var lastSearchQuery by mutableStateOf<String?>(null)
         private set
 
+    var searchText by mutableStateOf("")
+    var isSearchActive by mutableStateOf(false)
+
     var hasNextPage by mutableStateOf(true)
         private set
 
@@ -159,6 +162,8 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
                     currentPage = 1
                     animeMangaDefaultList = emptyList()
                     lastSearchQuery = null
+                    searchText = ""
+                    isSearchActive = false
                     hasNextPage = true
                 }
                 val response = apolloClient.query(GetAnimeMangasListQuery(page = Optional.present(currentPage))).execute()
@@ -195,6 +200,7 @@ class AnimeMangaViewModel(application: Application) : AndroidViewModel(applicati
                     currentPage = 1
                     animeMangaDefaultList = emptyList()
                     lastSearchQuery = animeName
+                    isSearchActive = true
                     hasNextPage = true
                 }
                 val response = apolloClient.query(GetAnimeMangasListByQuery(
