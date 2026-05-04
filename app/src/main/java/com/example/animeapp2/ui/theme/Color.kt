@@ -2,7 +2,7 @@ package com.example.animeappjetpackcomposee.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Colores para el tema oscuro (The Eclipse)
+// Colores para el tema oscuro
 val DarkBackground = Color(0xFF0D0D0D) // Negro casi puro
 val DarkSurface = Color(0xFF1A1A1A)    // Gris muy oscuro para tarjetas
 val BloodRed = Color(0xFF990000)// Rojo vibrante para botones
