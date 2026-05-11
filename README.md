@@ -1,7 +1,7 @@
 # 🩸 Crimson List - Gestión de Biblioteca de Anime & Manga
 
 **Crimson List** es una aplicación Android de alto rendimiento diseñada para la organización y seguimiento de catálogos personales de anime y manga. El proyecto destaca por integrar tecnologías de vanguardia como **Inteligencia Artificial Generativa**, **GraphQL**, y una arquitectura **MVVM Reactiva**, ofreciendo una experiencia de usuario fluida y visualmente inmersiva.
-** IMPORTANTE: Los correos de autenticacion estan llegando a la carpeta de spam, si no se encuentra el correo lo mas seguro es que este ahi
+**IMPORTANTE: Los correos de autenticacion estan llegando a la carpeta de spam, si no se encuentra el correo lo mas seguro es que este ahi
 
 ---
 
